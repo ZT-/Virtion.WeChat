@@ -1,0 +1,61 @@
+﻿<Window x:Class="Virtion.WeChat.Windows.ChatSettingWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ChatSettingWindow" 
+        Height="300" Width="350"
+        WindowStyle="ToolWindow"
+        WindowStartupLocation="CenterScreen"
+        >
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Label  Content="监控规则" />
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    >
+            <CheckBox x:Name="CB_IsFilterMsg"
+                Content="发送消息长度大于 "
+                      />
+            <TextBox x:Name="TB_MaxMsgLength"
+                Width="50" 
+                VerticalAlignment="Center"
+                />
+            <Label Content="（字）将被踢出"
+                   VerticalAlignment="Center"
+                   />
+        </StackPanel>
+
+        <CheckBox  x:Name="CB_IsFilterAdd"
+            Grid.Row="2"
+            Content="非白名单人员邀请踢除被邀请人员"/>
+
+        <CheckBox  x:Name="CB_IsFilterSelf"
+            Grid.Row="3"
+            Content="非白名单人员邀请踢除本人"/>
+
+        <CheckBox x:Name="CB_IsHightLight"
+                  Grid.Row="4"
+                  Visibility="Hidden"
+                  Content="高亮最近出现的人员"
+                  />
+
+        <Button     
+                Grid.Row="5"
+                 Width="100"
+                 VerticalAlignment="Center"
+                 Content="确认"
+                 Click="Button_Click"
+                />
+
+    </Grid>
+</Window>
+
+    

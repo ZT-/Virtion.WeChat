@@ -1,2 +1,2 @@
 # Virtion.WeChat
-WeChat windows platform client written in c
+WeChat windows platform client written in c#

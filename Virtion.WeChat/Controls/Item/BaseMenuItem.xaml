@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="WeChat.Controls.Item.BaseMenuItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             >
+    <UserControl.Style>
+        <Style TargetType="{x:Type UserControl}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+
+
+    <UserControl.Resources>
+        <Style x:Key="FontAwesome">
+            <Setter Property="TextElement.FontFamily" Value="pack://application:,,,/Resources/#FontAwesome" />
+            <Setter Property="TextBlock.TextAlignment" Value="Center"></Setter>
+            <Setter Property="TextBlock.FontSize" Value="18"></Setter>
+            <!--<Setter Property="TextBlock.Foreground" Value="#555555"></Setter>-->
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="G_Content"
+        Height="28"
+        Background="#EEEEEE"
+        MouseEnter="Grid_MouseEnter"
+        MouseLeave="Grid_MouseLeave"
+              >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="45" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBlock  x:Name="IconContent"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Style="{DynamicResource FontAwesome}"
+                Text="&#xf01a;"  
+                       />
+        <TextBlock x:Name="TextContent"
+                Grid.Column="1"
+                VerticalAlignment="Top" 
+                FontSize="14"
+                Text="defaulte"
+                Margin="0,4,0,0"   
+                />
+
+    </Grid>
+
+</UserControl>

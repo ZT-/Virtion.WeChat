@@ -1,0 +1,30 @@
+﻿<Window x:Class="Virtion.Windows.MenuWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MenuWindow" 
+        SizeToContent="WidthAndHeight"
+        WindowStyle="None"
+        Background="Transparent"
+        AllowsTransparency="True"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Deactivated="Window_Deactivated"
+        >
+    <Border 
+        Margin="5"
+        >
+        <StackPanel x:Name="SP_Content"
+          Width="100"
+          Background="#EEEEEE"
+          Loaded="Grid_Loaded">
+
+        </StackPanel>
+
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="10" 
+                              ShadowDepth="0" />
+        </Border.Effect>
+
+    </Border>
+</Window>
+    
