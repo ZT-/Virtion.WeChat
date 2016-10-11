@@ -190,10 +190,11 @@ namespace Virtion.WeChat
                 this.AddSessionList(user);
             }
 
-            if (init.BaseResponse.Ret != 0)
+            if (init == null || init.BaseResponse.Ret != 0)
             {
-                MessageBox.Show("初始化失败,webwxinit.BaseResponse.Ret:" + init.BaseResponse.Ret, "错误", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("初始化失败", "错误");
                 Close();
+                return;
             }
             CurrentUser.Synckey = init.SyncKey;
         }
@@ -213,7 +214,6 @@ namespace Virtion.WeChat
             jsonObj.Add("rr", time);
 
             WxSync sync = HttpRequest.PostJsonSync<WxSync>(url, jsonObj);
-            CurrentUser.Synckey = sync.SyncKey;
 
             //Console.WriteLine("BaseResponse.Ret:" + sync.BaseResponse.Ret);
             //Console.WriteLine("AddMsgCount:" + sync.AddMsgCount);
@@ -221,13 +221,14 @@ namespace Virtion.WeChat
             //Console.WriteLine("ModContactCount:" + sync.ModContactCount);
             //Console.WriteLine("DelContactCount:" + sync.DelContactCount);
             //Console.WriteLine("ModChatRoomMemberCount:" + sync.ModChatRoomMemberCount);
-
-            if (sync.BaseResponse.Ret != 0)
+            if (sync == null || sync.BaseResponse.Ret != 0)
             {
-                MessageBox.Show("读取消息失败,webwxsync.BaseResponse.Ret:" + sync.BaseResponse.Ret, "错误",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("读取消息失败", "错误");
+                return;
                 //Close();
             }
+
+            CurrentUser.Synckey = sync.SyncKey;
 
             foreach (Msg msg in sync.AddMsgList)
             {

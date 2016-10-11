@@ -43,7 +43,7 @@ namespace Virtion.WeChat.Struct
         public string Alias { get; set; }
         public int Scene { get; set; }
         public int VerifyFlag { get; set; }
-        public int AttrStatus { get; set; }
+        public long AttrStatus { get; set; }
         public int Sex { get; set; }
         public string Ticket { get; set; }
         public int OpCode { get; set; }

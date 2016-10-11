@@ -37,7 +37,7 @@ namespace Virtion.WeChat.Struct
         public User[] MemberList { get; set; }
         public long OwnerUin { get; set; }
         public int Statues { get; set; }
-        public int AttrStatus { get; set; }
+        public long AttrStatus { get; set; }
         public string Province { get; set; }
         public string City { get; set; }
         public string Alias { get; set; }

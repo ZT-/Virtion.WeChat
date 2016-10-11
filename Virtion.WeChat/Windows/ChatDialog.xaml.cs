@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Virtion.Util;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Controls;
 using Virtion.WeChat.Struct;
 using MahApps.Metro.Controls;
@@ -48,6 +49,8 @@ namespace Virtion.WeChat
         private ChatSettingWindow settingWindow;
         private ChatConfig chatConfig;
         private User user;
+        private Dictionary<string, string> nameTable;
+
         //private List<User> backUser;
 
         public ChatDialog(User user)
@@ -68,12 +71,12 @@ namespace Virtion.WeChat
             {
                 string s = File.ReadAllText(this.configPath);
                 this.chatConfig = JsonConvert.DeserializeObject<ChatConfig>(s);
-
                 this.CB_Monitor.IsChecked = this.chatConfig.IsMonitor;
             }
             else
             {
                 this.chatConfig = new ChatConfig();
+
             }
         }
 
@@ -219,6 +222,12 @@ namespace Virtion.WeChat
             jsonObj.Add("List", JArray.FromObject(list));
             HttpRequest.PostJson<GroupMenber>(url, jsonObj, (obj) =>
             {
+                this.nameTable = new Dictionary<string, string>();
+                foreach (var userItem in obj.ContactList)
+                {
+                    this.nameTable[userItem.UserName] = userItem.DisplayName;
+                }
+
                 this.ShowMemberList(obj.ContactList);
                 var s = JsonConvert.SerializeObject(obj.ContactList);
                 Console.WriteLine(s);
@@ -289,30 +298,66 @@ namespace Virtion.WeChat
 
             if (this.chatConfig.IsFilterMsg == true)
             {
-                if (msg.Content.Length > this.chatConfig.MaxMsgLength)
-                {
-                    foreach (ListBoxItem listItem in this.LB_MemberList.Items)
-                    {
-                        var user = listItem.DataContext as User;
-                        if (user.UserName == msg.FromUserName)
-                        {
-                            int pos = this.whiteList.IndexOf(user.PseudoUID);
-                            if (pos == -1)
-                            {
-                                this.DeleteMenber(user);
-                            }
-                            break;
-                        }
-                    }
-                }
+                FilterMaxCountMessage(msg);
             }
 
-            TB_Receive.Text += CurrentUser.ContactTable[msg.FromUserName].DisplayName + ":\n";
+
+            if (CurrentUser.ChatTable.ContainsKey(msg.FromUserName) == true)
+            {
+                TB_Receive.Text += CurrentUser.ChatTable[msg.FromUserName].DisplayName + ":\n";
+            }
+            else
+            {
+                if (CurrentUser.ContactTable.ContainsKey(msg.FromUserName) == true)
+                {
+                    TB_Receive.Text += CurrentUser.ContactTable[msg.FromUserName].DisplayName + ":\n";
+                }
+                else
+                {
+                    if (this.nameTable != null && this.nameTable.ContainsKey(msg.FromUserName) == true)
+                    {
+                        TB_Receive.Text += this.nameTable[msg.FromUserName] + ":\n";
+                    }
+                    else
+                    {
+                        TB_Receive.Text += msg.FromUserName + ":\n";
+                    }
+                }
+
+            }
+
             TB_Receive.Text += msg.Content + "\n";
             TB_Receive.ScrollToEnd();
+
+            if (this.chatConfig.IsFilterUserMsg == true)
+            {
+                this.FilterUserDefineMessage(msg);
+            }
         }
 
-        public void Send(object sender, MouseButtonEventArgs e)
+        public void FilterUserDefineMessage(Msg msg)
+        {
+            if (this.chatConfig.UserMsg == msg.Content)
+            {
+                var random = new Random();
+                var index = random.Next(this.chatConfig.DefineList.Count);
+
+                var thread = new Thread(() =>
+                {
+                    if (this.chatConfig.Delay > 0)
+                    {
+                        Thread.Sleep(this.chatConfig.Delay);
+                    }
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        this.SendMessage(this.chatConfig.DefineList[index]);
+                    }));
+                });
+                thread.Start();
+            }
+        }
+
+        public void SendMessage(string word)
         {
             long time = Time.Now();
             string url = WXApi.SendMessageUrl +
@@ -327,7 +372,7 @@ namespace Virtion.WeChat
             msg.FromUserName = CurrentUser.Me.UserName;
             msg.ToUserName = user.UserName;
             msg.Type = 1;
-            msg.Content = TB_SendBox.Text.Replace("\r", "");
+            msg.Content = word;
             msg.ClientMsgId = time;
             msg.LocalID = time;
             TB_SendBox.Clear();
@@ -347,6 +392,32 @@ namespace Virtion.WeChat
             Console.WriteLine(recvmsg.Content);
 
             App.MainWindow.DealMessage(recvmsg);
+
+        }
+
+        public void FilterMaxCountMessage(Msg msg)
+        {
+            if (msg.Content.Length > this.chatConfig.MaxMsgLength)
+            {
+                foreach (ListBoxItem listItem in this.LB_MemberList.Items)
+                {
+                    var user = listItem.DataContext as User;
+                    if (user.UserName == msg.FromUserName)
+                    {
+                        int pos = this.whiteList.IndexOf(user.PseudoUID);
+                        if (pos == -1)
+                        {
+                            this.DeleteMenber(user);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void Send(object sender, MouseButtonEventArgs e)
+        {
+            this.SendMessage(TB_SendBox.Text.Replace("\r", ""));
         }
 
         private void SaveConfig()
@@ -379,11 +450,14 @@ namespace Virtion.WeChat
 
             if (CurrentUser.MessageTable.ContainsKey(user.UserName))
             {
-                foreach (Msg msg in CurrentUser.MessageTable[user.UserName])
+                var list = CurrentUser.MessageTable[user.UserName];
+                for (int i = 0; i < list.Count; i++)
                 {
+                    Msg msg = list[i];
                     ReceiveMessage(msg);
                 }
             }
+
         }
         ///白名单漏洞，昵称一样的
         private void AddWhiteMenuItem_Click(object sender, RoutedEventArgs e)

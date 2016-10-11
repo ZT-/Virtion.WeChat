@@ -89,6 +89,20 @@ namespace Virtion.WeChat.Windows
             IsFilterAdd = config.IsFilterAdd;
             IsFilterSelf = config.IsFilterSelf;
             IsHightLight = config.IsHightLight;
+
+            this.CB_IsFilterUserMsg.IsChecked = this.config.IsFilterUserMsg;
+            this.TB_UserMsg.Text = this.config.UserMsg;
+
+            this.TB_Delay.Text = this.config.Delay.ToString();
+
+            for (int i = 0; i < this.config.DefineList.Count; i++)
+            {
+                if (i != 0)
+                {
+                    this.TB_DefineList.Text += "/";
+                }
+                this.TB_DefineList.Text += this.config.DefineList[i];
+            }
         }
 
         public ChatConfig GetConfig()
@@ -104,12 +118,48 @@ namespace Virtion.WeChat.Windows
             }
             else
             {
-                MessageBox.Show("输入不是数字");
+                MessageBox.Show("输入字符上限不是数字");
             }
+
+            var isChecked = this.CB_IsFilterUserMsg.IsChecked;
+            if (isChecked == true)
+            {
+                this.config.IsFilterUserMsg = true;
+                string s = this.TB_UserMsg.Text;
+                if (string.IsNullOrEmpty(s) == false)
+                {
+                    this.config.UserMsg = s;
+                    string text = this.TB_DefineList.Text;
+
+                    if (string.IsNullOrEmpty(this.TB_Delay.Text) == false)
+                    {
+                        if (Int32.TryParse(this.TB_Delay.Text, out i) == true)
+                        {
+                            this.config.Delay = i;
+                        }
+                        else
+                        {
+                            MessageBox.Show("输入延时不是数字");
+                        }
+                    }
+
+                    var list = text.Split('/');
+                    this.config.DefineList.Clear();
+                    foreach (var item in list)
+                    {
+                        this.config.DefineList.Add(item);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("自定义消息不能为空");
+                }
+            }
+
             return this.config;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void B_OK_OnClick(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ChatSettingWindow" 
-        Height="300" Width="350"
+        Height="600" Width="350"
         WindowStyle="ToolWindow"
         WindowStartupLocation="CenterScreen"
         >
@@ -13,6 +13,9 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="200"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
@@ -47,12 +50,50 @@
                   Content="高亮最近出现的人员"
                   />
 
-        <Button     
+        <CheckBox x:Name="CB_IsFilterUserMsg"
+                  Grid.Row="4"
+                  Content="检测自定义消息"
+                  />
+
+        <TextBox x:Name="TB_UserMsg"
+                Margin="5"
                 Grid.Row="5"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+            />
+
+        <StackPanel  Grid.Row="6"
+                     Orientation="Horizontal"
+                     >
+            <Label Content="自定义内容（用/隔开）"
+                   VerticalAlignment="Center"/>
+
+            <Label Content="延时"
+                    VerticalAlignment="Center"
+                   />
+
+            <TextBox x:Name="TB_Delay"
+                     Width="60"
+                     VerticalContentAlignment="Center"
+                     VerticalAlignment="Center"
+                     AcceptsReturn="True"
+                     TextAlignment="Left"
+                     TextWrapping="WrapWithOverflow"
+                     />
+
+        </StackPanel>
+
+        <TextBox x:Name="TB_DefineList"
+            Grid.Row="7"
+             Margin="5"     
+            />
+
+        <Button  x:Name="B_OK" 
+                Grid.Row="8"
                  Width="100"
                  VerticalAlignment="Center"
                  Content="确认"
-                 Click="Button_Click"
+                 Click="B_OK_OnClick"
                 />
 
     </Grid>

@@ -27,6 +27,7 @@ namespace Virtion.WeChat
             backgroundWorker = new BackgroundWorker();
             backgroundWorker.DoWork += Login_DoWork;
             backgroundWorker.WorkerReportsProgress = true;
+            backgroundWorker.WorkerSupportsCancellation = true;
             backgroundWorker.ProgressChanged += Login_StateChange;
             backgroundWorker.RunWorkerCompleted += Login_Completed;
             backgroundWorker.RunWorkerAsync();
