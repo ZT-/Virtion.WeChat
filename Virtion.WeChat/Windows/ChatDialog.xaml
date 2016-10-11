@@ -1,4 +1,4 @@
-﻿<Controls:MetroWindow
+﻿<Controls:MetroWindow xmlns:Control="clr-namespace:Virtion.UI.Control" 
         x:Class="Virtion.WeChat.ChatDialog"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -131,41 +131,48 @@
 
         <Grid Grid.Column="1"
                  Grid.Row="0"
-                 Grid.RowSpan="3" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*"/>
-                <RowDefinition Height="30" />
-                <RowDefinition Height="3*" />
-            </Grid.RowDefinitions>
+                 Grid.RowSpan="3"
+            >
+            <Grid  >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="3*" />
+                </Grid.RowDefinitions>
 
-            <ListBox x:Name="LB_WhiteList"
+                <ListBox x:Name="LB_WhiteList"
                  Background="#FFEFF3F7"
                  BorderBrush="Black"
                  BorderThickness="1"                     
             />
 
-            <Border Grid.Row="1"
+                <Border Grid.Row="1"
                     Background="#EEEEEE"
                     BorderBrush="Black"
                     BorderThickness="1"
                     >
-                <Image x:Name="I_Reflash"
+                    <Image x:Name="I_Reflash"
                     Source="/Virtion.WeChat;component/Resources/img/reflash.png"
                      Height="24"  
                     HorizontalAlignment="Left"
                     ToolTip="刷新"
                     MouseLeftButtonUp="I_Reflash_MouseLeftButtonUp"
                   />
-            </Border>
+                </Border>
 
-            <ListBox x:Name="LB_MemberList"
+                <ListBox x:Name="LB_MemberList"
                  Grid.Row="2"     
                  Background="#FFEFF3F7"
                  BorderBrush="Black"
                  BorderThickness="1"     
             />
+
+            </Grid>
+            <Control:LoadingMask x:Name="LM_Marsk" 
+                                
+                                 Tip="获取列表中"
+                                 />
         </Grid>
-
-
+        
     </Grid>
 </Controls:MetroWindow>

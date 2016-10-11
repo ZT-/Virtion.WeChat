@@ -200,6 +200,7 @@ namespace Virtion.WeChat
 
         private void GetMemberList()
         {
+            this.LM_Marsk.IsLoading = true;
             long time = Time.Now();
             string url = WXApi.GetDetailUrl
                 + "type=ex&lang=zh_CN&r=" + time
@@ -229,8 +230,9 @@ namespace Virtion.WeChat
                 }
 
                 this.ShowMemberList(obj.ContactList);
-                var s = JsonConvert.SerializeObject(obj.ContactList);
-                Console.WriteLine(s);
+                //var s = JsonConvert.SerializeObject(obj.ContactList);
+                //Console.WriteLine(s);
+                this.LM_Marsk.IsLoading = false;
             });
 
         }
