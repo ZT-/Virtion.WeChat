@@ -65,6 +65,12 @@ namespace Virtion.WeChat
 
         }
 
+        public new void Show()
+        {
+            this.TB_Receive.Text = "";
+            base.Show();
+        }
+
         private void LoadSetting()
         {
             if (File.Exists(this.configPath) == true)
@@ -166,11 +172,14 @@ namespace Virtion.WeChat
 
         private void ShowMemberList(User[] list)
         {
+            this.nameTable = new Dictionary<string, string>();
+
             this.LB_WhiteList.Items.Clear();
             this.LB_MemberList.Items.Clear();
             foreach (var item in list)
             {
                 item.SetDisplayName();
+                this.nameTable[item.UserName] = item.DisplayName;
 
                 this.FilterWhiteList(item);
 
@@ -223,12 +232,6 @@ namespace Virtion.WeChat
             jsonObj.Add("List", JArray.FromObject(list));
             HttpRequest.PostJson<GroupMenber>(url, jsonObj, (obj) =>
             {
-                this.nameTable = new Dictionary<string, string>();
-                foreach (var userItem in obj.ContactList)
-                {
-                    this.nameTable[userItem.UserName] = userItem.DisplayName;
-                }
-
                 this.ShowMemberList(obj.ContactList);
                 //var s = JsonConvert.SerializeObject(obj.ContactList);
                 //Console.WriteLine(s);
@@ -293,53 +296,64 @@ namespace Virtion.WeChat
             this.LB_MemberList.Items.Remove(this.LB_MemberList.SelectedItem);
         }
 
+        public bool IsGroup()
+        {
+            if (this.user.UserName.StartsWith("@@") == true)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public void ReceiveMessage(Msg msg)
         {
             if (msg.MsgType != 1)
                 return;
 
-            if (this.chatConfig.IsFilterMsg == true)
+            if (this.IsGroup() == true)
             {
-                FilterMaxCountMessage(msg);
-            }
-
-
-            if (CurrentUser.ChatTable.ContainsKey(msg.FromUserName) == true)
-            {
-                TB_Receive.Text += CurrentUser.ChatTable[msg.FromUserName].DisplayName + ":\n";
-            }
-            else
-            {
-                if (CurrentUser.ContactTable.ContainsKey(msg.FromUserName) == true)
+                if (this.chatConfig != null && this.chatConfig.IsFilterMsg == true)
                 {
-                    TB_Receive.Text += CurrentUser.ContactTable[msg.FromUserName].DisplayName + ":\n";
+                    FilterMaxCountMessage(msg);
                 }
-                else
+
+                int pos = msg.Content.IndexOf(":<br/>");
+                if (pos > -1)
                 {
-                    if (this.nameTable != null && this.nameTable.ContainsKey(msg.FromUserName) == true)
+                    var userID = msg.Content.Substring(0, pos);
+                    if (this.nameTable != null && this.nameTable.ContainsKey(userID) == true)
                     {
-                        TB_Receive.Text += this.nameTable[msg.FromUserName] + ":\n";
+                        TB_Receive.Text += this.nameTable[userID] + ":\n";
                     }
                     else
                     {
                         TB_Receive.Text += msg.FromUserName + ":\n";
                     }
+                    var content = msg.Content.Substring(pos + 6);
+                    TB_Receive.Text += content + "\n";
+                }
+                else
+                {
+
+                    TB_Receive.Text +="我：\n"+ msg.Content + "\n";
                 }
 
+                if (this.chatConfig != null && this.chatConfig.IsFilterUserMsg == true)
+                {
+                    this.FilterUserDefineMessage(msg);
+                }
             }
-
-            TB_Receive.Text += msg.Content + "\n";
-            TB_Receive.ScrollToEnd();
-
-            if (this.chatConfig.IsFilterUserMsg == true)
+            else
             {
-                this.FilterUserDefineMessage(msg);
+                TB_Receive.Text += this.user.DisplayName + ":\n";
+                TB_Receive.Text += msg.Content + "\n";
             }
+            TB_Receive.ScrollToEnd();
         }
 
         public void FilterUserDefineMessage(Msg msg)
         {
-            if (this.chatConfig.UserMsg == msg.Content)
+            if (msg.Content.IndexOf(this.chatConfig.UserMsg) > -1)
             {
                 var random = new Random();
                 var index = random.Next(this.chatConfig.DefineList.Count);
@@ -382,18 +396,7 @@ namespace Virtion.WeChat
 
             WxSendMsg wxsendmsg = HttpRequest.PostJsonSync<WxSendMsg>(url, jsonObj);
 
-            Msg recvmsg = new Msg();
-            recvmsg.MsgId = wxsendmsg.MsgID;
-            recvmsg.FromUserName = msg.FromUserName;
-            recvmsg.ToUserName = msg.ToUserName;
-            recvmsg.MsgType = msg.Type;
-            recvmsg.Content = msg.Content;
-            recvmsg.CreateTime = msg.LocalID;
-
-            Console.WriteLine("发送消息");
-            Console.WriteLine(recvmsg.Content);
-
-            App.MainWindow.DealMessage(recvmsg);
+            TB_Receive.Text += "我：\n" + msg.Content + "\n";
 
         }
 
@@ -437,6 +440,7 @@ namespace Virtion.WeChat
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+
             if (user.UserName.StartsWith("@@") == true)
             {
                 this.LoadSetting();
@@ -458,6 +462,7 @@ namespace Virtion.WeChat
                     Msg msg = list[i];
                     ReceiveMessage(msg);
                 }
+                list.Clear();
             }
 
         }
@@ -541,6 +546,7 @@ namespace Virtion.WeChat
             this.settingWindow = new ChatSettingWindow();
             this.settingWindow.SetConfig(this.chatConfig);
             this.settingWindow.ShowDialog();
+
             this.chatConfig = this.settingWindow.GetConfig();
             this.SaveConfig();
         }

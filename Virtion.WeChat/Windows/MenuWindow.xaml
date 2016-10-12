@@ -9,6 +9,8 @@
         ShowInTaskbar="False"
         Topmost="True"
         Deactivated="Window_Deactivated"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="False"
         >
     <Border 
         Margin="5"

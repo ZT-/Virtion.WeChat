@@ -47,7 +47,7 @@ namespace Virtion.WeChat
 
         private ImageSource GetHead(User user)
         {
-            string jpgPath = avatarTmpFolder + user.PseudoUID+ ".jpg";
+            string jpgPath = avatarTmpFolder + user.PseudoUID + ".jpg";
 
             System.Drawing.Bitmap bmp = null;
 
@@ -67,14 +67,21 @@ namespace Virtion.WeChat
                     response.Close();
                     return null;
                 }
-                Stream dataStream = response.GetResponseStream();
-                var img = System.Drawing.Image.FromStream(dataStream);
-                dataStream.Close();
-                response.Close();
-                bmp = new System.Drawing.Bitmap(img);
+                System.Drawing.Image img = null;
+                try
+                {
+                    Stream dataStream = response.GetResponseStream();
+                    img = System.Drawing.Image.FromStream(dataStream);
+                    dataStream.Close();
+                    response.Close();
+                    bmp = new System.Drawing.Bitmap(img);
+                }
+                catch (Exception)
+                {
+                    bmp = new System.Drawing.Bitmap(10, 10);
+                }
                 bmp.Save(jpgPath);
             }
-
 
             IntPtr hBitmap = bmp.GetHbitmap();
             ImageSource WpfBitmap =

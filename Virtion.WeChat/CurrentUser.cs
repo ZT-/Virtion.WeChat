@@ -18,7 +18,14 @@ namespace Virtion.WeChat
         public static string WxUin;
         public static string WebWxDataTicket;
         public static string PassTicket;
-        public static string DeviceId = "e179213476367295";
+        public static string DeviceId 
+        {
+            get
+            {
+                Random r= new Random();
+                return "e" + 179213476367295 + r.Next(9999999);
+            }
+        }
         public static string Cookie;
         public static SyncKey Synckey;
         public static BaseRequest BaseRequest;

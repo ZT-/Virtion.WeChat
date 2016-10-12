@@ -20,6 +20,7 @@ namespace Virtion.Windows
             this.Left = left - this.ActualWidth;
             this.Top = top - this.ActualHeight;
             this.Activate();
+   
             //Console.WriteLine("SetPosition");
         }
 

@@ -46,6 +46,7 @@ namespace Virtion.WeChat
             {
                 POINT pt = new POINT();
                 User32.GetCursorPos(ref pt);
+  
                 this.menuWindow.SetPosition(pt.x, pt.y);
                 this.menuWindow.Show();
             }

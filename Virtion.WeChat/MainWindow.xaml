@@ -16,6 +16,7 @@
         WindowCloseButtonStyle="{DynamicResource CommondButtonStyle}"
         Closing="MetroWindow_Closing"
         Loaded="Window_Loaded" 
+        SnapsToDevicePixels="True"
         >
     <Controls:MetroWindow.Resources>
         <Style x:Key="CommondButtonStyle" TargetType="Button">

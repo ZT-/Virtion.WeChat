@@ -5,6 +5,7 @@
         Height="550" Width="400" 
         WindowStartupLocation="CenterScreen" 
         Loaded="Window_Loaded"
+        SnapsToDevicePixels="True"
         >
     <Grid Background="#42464c">
         <Grid.RowDefinitions>

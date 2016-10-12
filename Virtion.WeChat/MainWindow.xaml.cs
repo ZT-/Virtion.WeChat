@@ -51,6 +51,7 @@ namespace Virtion.WeChat
         public MainWindow()
         {
             //ConsoleHelper.Show();
+            ShowNotifyIcon();
 
             (new LoginWindow()).ShowDialog();
 
@@ -193,8 +194,8 @@ namespace Virtion.WeChat
             if (init == null || init.BaseResponse.Ret != 0)
             {
                 MessageBox.Show("初始化失败", "错误");
-                Close();
-                return;
+                App.Current.Shutdown();
+                //return;
             }
             CurrentUser.Synckey = init.SyncKey;
         }
@@ -223,13 +224,12 @@ namespace Virtion.WeChat
             //Console.WriteLine("ModChatRoomMemberCount:" + sync.ModChatRoomMemberCount);
             if (sync == null || sync.BaseResponse.Ret != 0)
             {
-                MessageBox.Show("读取消息失败", "错误");
+                //MessageBox.Show("读取消息失败", "错误");
                 return;
                 //Close();
             }
 
             CurrentUser.Synckey = sync.SyncKey;
-
             foreach (Msg msg in sync.AddMsgList)
             {
                 DealMessage(msg);
@@ -542,8 +542,7 @@ namespace Virtion.WeChat
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
-            ShowNotifyIcon();
+            //ShowNotifyIcon();
 
             this.LM_Marsk.IsLoading = true;
 
