@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Virtion.Util;
-using WeChat;
+﻿using Virtion.WeChat.Util;
 
 namespace Virtion.WeChat
 {
-    public class WXApi
+    public class WxApi
     {
         public static string QrCodeUuidUrl = "https://login.wx.qq.com/jslogin?appid=wx782c26e4c19acffb&redirect_uri=http%3A%2F%2Fwx.qq.com%2Fcgi-bin%2Fmmwebwx-bin%2Fwebwxnewloginpage&fun=new&lang=zh_CN&_=" + Time.Now();
+       
         public static string QrCodeImageUrl = "https://login.weixin.qq.com/qrcode/";
     
         public static string LoginUrl = "https://login.wx.qq.com/cgi-bin/mmwebwx-bin/login";

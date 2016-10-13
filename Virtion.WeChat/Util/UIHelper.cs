@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Virtion.Util
+namespace Virtion.WeChat.Util
 {
     class UIHelper
     {

@@ -8,6 +8,7 @@ using System.Reflection;
 using System.IO;
 using System.Diagnostics;
 using Virtion.WeChat.Struct;
+using Virtion.WeChat.Windows;
 
 namespace Virtion.WeChat
 {

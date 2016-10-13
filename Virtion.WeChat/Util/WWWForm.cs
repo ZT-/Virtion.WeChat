@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-
-namespace Virtion.Util
+namespace Virtion.WeChat.Util
 {
     /// <summary>
     ///   <para>Helper class to generate form data to post to web servers using the WWW class.</para>

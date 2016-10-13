@@ -84,10 +84,10 @@ namespace Virtion.WeChat.Windows
         {
             this.config = config;
 
-            IsFilterMsg = config.IsFilterMsg;
+            IsFilterMsg = config.IsFilterMsgCount;
             MaxMsgLength = config.MaxMsgLength.ToString();
             IsFilterAdd = config.IsFilterAdd;
-            IsFilterSelf = config.IsFilterSelf;
+            IsFilterSelf = config.IsFilterSelfDef;
             IsHightLight = config.IsHightLight;
 
             this.CB_IsFilterUserMsg.IsChecked = this.config.IsFilterUserMsg;
@@ -107,8 +107,8 @@ namespace Virtion.WeChat.Windows
 
         public ChatConfig GetConfig()
         {
-            this.config.IsFilterMsg = this.CB_IsFilterMsg.IsChecked.Value;
-            this.config.IsFilterSelf = this.CB_IsFilterSelf.IsChecked.Value;
+            this.config.IsFilterMsgCount = this.CB_IsFilterMsg.IsChecked.Value;
+            this.config.IsFilterSelfDef = this.CB_IsFilterSelf.IsChecked.Value;
             this.config.IsHightLight = this.CB_IsFilterAdd.IsChecked.Value;
             this.config.IsFilterAdd = this.CB_IsFilterAdd.IsChecked.Value;
             int i = 0;

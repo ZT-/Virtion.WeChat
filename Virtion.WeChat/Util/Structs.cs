@@ -1,8 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
-using System.Windows.Shapes;
 
-namespace Virtion.Util.Native
+namespace Virtion.WeChat.Util
 {
 	
 	/// <summary>

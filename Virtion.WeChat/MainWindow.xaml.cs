@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
-using Virtion.Util;
-using Virtion.WeChat;
-using WeChat.Controls.Item;
 using MahApps.Metro.Controls;
 using Virtion.WeChat.Struct;
 using System.Windows.Media;
 using System.Windows.Controls;
+using Virtion.WeChat.Controls.Item;
+using Virtion.WeChat.Util;
+using Virtion.WeChat.Windows;
 
 namespace Virtion.WeChat
 {
@@ -63,12 +61,6 @@ namespace Virtion.WeChat
             }
 
             InitializeComponent();
-        }
-
-        private void NotifyIcon_Click(object sender, EventArgs e)
-        {
-            this.Show();
-            this.Activate();
         }
 
         private void ShowNotifyIcon()
@@ -163,7 +155,7 @@ namespace Virtion.WeChat
         {
             Console.WriteLine("GetInitInfo");
 
-            string url = WXApi.GetInitUrl +
+            string url = WxApi.GetInitUrl +
                 "?pass_ticket=" + CurrentUser.PassTicket +
                 "&skey=" + CurrentUser.Skey +
                 "&r=" + Time.Now();
@@ -204,7 +196,7 @@ namespace Virtion.WeChat
         private void SyncList()
         {
             long time = Time.Now();
-            string url = WXApi.SyncMsgUrl +
+            string url = WxApi.SyncMsgUrl +
                 "pass_ticket=" + CurrentUser.PassTicket +
                 "&sid=" + CurrentUser.WxSid +
                 "&skey=" + CurrentUser.Skey +
@@ -240,7 +232,7 @@ namespace Virtion.WeChat
         public User[] GetGroupDetail(List<string> userList)
         {
             long time = Time.Now();
-            string url = WXApi.GetDetailUrl
+            string url = WxApi.GetDetailUrl
                 + "type=ex&lang=zh_CN&r=" + time
                 + "&pass_ticket=" + CurrentUser.PassTicket;
 
@@ -453,7 +445,7 @@ namespace Virtion.WeChat
 
         private void GetContact()
         {
-            string url = WXApi.GetContactUrl +
+            string url = WxApi.GetContactUrl +
                 "pass_ticket=" + CurrentUser.PassTicket +
                 "&skey=" + CurrentUser.Skey +
                 "&r=" + Time.Now();
@@ -480,7 +472,7 @@ namespace Virtion.WeChat
         private void GetStatusNotify()
         {
             long time = Time.Now();
-            string url = WXApi.StatusNotifyUrl +
+            string url = WxApi.StatusNotifyUrl +
                 "?pass_ticket=" + CurrentUser.PassTicket +
                 "&sid=" + CurrentUser.WxSid +
                 "&skey=" + CurrentUser.Skey +
@@ -502,7 +494,7 @@ namespace Virtion.WeChat
 
         private void SyncCheck()
         {
-            string url = WXApi.SyncCheckUrl +
+            string url = WxApi.SyncCheckUrl +
                 "?pass_ticket=" + CurrentUser.PassTicket +
                 "&skey=" + CurrentUser.Skey +
                 "&sid=" + CurrentUser.WxSid +
@@ -528,11 +520,11 @@ namespace Virtion.WeChat
 
             if (!ret.retcode.Equals("0"))
             {
-                //MessageBox.Show("由于登录过于频繁系统拒绝登录稍等1分钟重新登录" + ret.retcode, "错误");
+                MessageBox.Show("由于登录过于频繁系统拒绝登录稍等1分钟重新登录" + ret.retcode, "错误");
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    //this.Close();
-                    //App.Current.Shutdown();
+                    this.Close();
+                    App.Current.Shutdown();
                 }));
             }
 

@@ -3,7 +3,7 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Virtion.UI.Control
+namespace Virtion.WeChat.Controls
 {
     public partial class LoadingMask : UserControl
     {

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Text;
 using System.IO;
+using System.Text;
 using System.Windows;
 
-namespace Virtion.Util
+namespace Virtion.WeChat.Util
 {
     class FileManager
     {

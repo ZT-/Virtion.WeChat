@@ -11,7 +11,6 @@ using System.Windows.Controls;
 using Virtion.WeChat.Struct;
 using System.Text;
 using System.Security.Cryptography;
-using Virtion.Util;
 
 namespace Virtion.WeChat
 {

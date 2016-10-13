@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 
-namespace Virtion.Util
+namespace Virtion.WeChat.Util
 {
     internal sealed class WWWTranscoder
     {

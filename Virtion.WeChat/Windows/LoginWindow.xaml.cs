@@ -1,14 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.ComponentModel;
-using Virtion.WeChat;
-using Virtion.Util;
+using Virtion.WeChat.Util;
 
-namespace Virtion.WeChat
+namespace Virtion.WeChat.Windows
 {
     public partial class LoginWindow : Window
     {
@@ -41,7 +37,7 @@ namespace Virtion.WeChat
             //等待登录
             while (!backgroundWorker.CancellationPending)
             {
-                string url = WXApi.LoginUrl +
+                string url = WxApi.LoginUrl +
                     "?tip=" + tip +
                     "&uuid=" + uuid +
                     "&_=" + Time.Now();
@@ -105,7 +101,7 @@ namespace Virtion.WeChat
 
         private void GetQrCodeUuid()
         {
-            string ret = HttpRequest.GetSync(WXApi.QrCodeUuidUrl);
+            string ret = HttpRequest.GetSync(WxApi.QrCodeUuidUrl);
             this.uuid = ret.Split('"')[1];
             this.tip = 1;
         }
@@ -115,7 +111,7 @@ namespace Virtion.WeChat
             GetQrCodeUuid();
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                Uri uri = new Uri(WXApi.QrCodeImageUrl + uuid + "?t=webwx&_=" + Time.Now(), UriKind.Absolute);
+                Uri uri = new Uri(WxApi.QrCodeImageUrl + uuid + "?t=webwx&_=" + Time.Now(), UriKind.Absolute);
                 this.I_OrCode.Source = new BitmapImage(uri);
             }));
         }

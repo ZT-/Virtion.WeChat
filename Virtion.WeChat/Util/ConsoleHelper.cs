@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows;
 
-namespace Virtion.Util
+namespace Virtion.WeChat.Util
 {
     public class ConsoleHelper
     {

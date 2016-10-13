@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using Virtion.Util;
+using Virtion.WeChat.Util;
 
 namespace Virtion.WeChat.Struct
 {

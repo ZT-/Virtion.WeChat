@@ -10,10 +10,10 @@ namespace Virtion.WeChat.Struct
         public bool IsMonitor;
         public string UserMsg;
         public bool IsFilterUserMsg;
-        public bool IsFilterMsg;
+        public bool IsFilterMsgCount;
         public int MaxMsgLength;
         public bool IsFilterAdd;
-        public bool IsFilterSelf;
+        public bool IsFilterSelfDef;
         public bool IsHightLight;
         public int Delay;
         public List<string> WhiteList;
@@ -24,10 +24,10 @@ namespace Virtion.WeChat.Struct
             this.WhiteList = new List<string>();
             this.DefineList = new List<string>();
             this.IsMonitor = false;
-            this.IsFilterMsg = true;
+            this.IsFilterMsgCount = false;
             this.MaxMsgLength = 500;
             this.IsFilterAdd = false;
-            this.IsFilterSelf = false;
+            this.IsFilterSelfDef = false;
             this.IsHightLight = true;
             this.Delay = 0;
         }

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace WeChat.Controls.Item
+namespace Virtion.WeChat.Controls.Item
 {
     public partial class BaseMenuItem : UserControl
     {

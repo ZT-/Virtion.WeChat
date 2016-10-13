@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Text;
-using System.Windows;
-using System.Windows.Input;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using MahApps.Metro.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Virtion.Util;
-using System.Collections.Generic;
-using System.Threading;
-using System.Windows.Controls;
 using Virtion.WeChat.Struct;
-using MahApps.Metro.Controls;
-using Virtion.WeChat.Windows;
-using System.Windows.Media;
+using Virtion.WeChat.Util;
 
-namespace Virtion.WeChat
+namespace Virtion.WeChat.Windows
 {
     class ChatRoom
     {
@@ -121,7 +117,7 @@ namespace Virtion.WeChat
                 this.DeleteMenber(firstUser);
             }
 
-            if (this.chatConfig.IsFilterSelf == true || firstUser != null)
+            if (this.chatConfig.IsFilterSelfDef == true || firstUser != null)
             {
                 this.DeleteMenber(firstUser);
             }
@@ -209,9 +205,9 @@ namespace Virtion.WeChat
 
         private void GetMemberList()
         {
-            this.LM_Marsk.IsLoading = true;
+           this.LM_Marsk.IsLoading = true;
             long time = Time.Now();
-            string url = WXApi.GetDetailUrl
+            string url = WxApi.GetDetailUrl
                 + "type=ex&lang=zh_CN&r=" + time
                 + "&pass_ticket=" + CurrentUser.PassTicket;
 
@@ -244,7 +240,7 @@ namespace Virtion.WeChat
         {
             this.LB_MemberList.Items.Clear();
             long time = Time.Now();
-            string url = WXApi.GetDetailUrl
+            string url = WxApi.GetDetailUrl
                 + "type=ex&lang=zh_CN&r=" + time
                 + "&pass_ticket=" + CurrentUser.PassTicket;
 
@@ -279,7 +275,7 @@ namespace Virtion.WeChat
                 return;
             }
 
-            string url = WXApi.DeleteMenberUrl + "&lang=zh_CN&pass_ticket=" + CurrentUser.PassTicket;
+            string url = WxApi.DeleteMenberUrl + "&lang=zh_CN&pass_ticket=" + CurrentUser.PassTicket;
 
             JObject jsonObj = new JObject();
             jsonObj.Add("BaseRequest", JObject.FromObject(CurrentUser.BaseRequest));
@@ -309,7 +305,7 @@ namespace Virtion.WeChat
         {
             if (this.CB_Monitor.IsChecked.Value == true && this.chatConfig != null)
             {
-                if (this.chatConfig.IsFilterMsg == true)
+                if (this.chatConfig.IsFilterMsgCount == true)
                 {
                     FilterMaxCountMessage(msg);
                 }
@@ -383,7 +379,7 @@ namespace Virtion.WeChat
         public void SendMessage(string word)
         {
             long time = Time.Now();
-            string url = WXApi.SendMessageUrl +
+            string url = WxApi.SendMessageUrl +
                 "?sid=" + CurrentUser.WxSid +
                 "&skey=" + CurrentUser.Skey +
                 "&pass_ticket=" + CurrentUser.PassTicket +

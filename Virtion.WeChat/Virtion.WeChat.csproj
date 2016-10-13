@@ -120,19 +120,19 @@
     <Compile Include="Controls\LoadingMask.xaml.cs">
       <DependentUpon>LoadingMask.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Virtion.Util\MD5Helper.cs" />
-    <Compile Include="Virtion.Util\Time.cs" />
-    <Compile Include="Virtion.Util\ConsoleHelper.cs" />
-    <Compile Include="Virtion.Util\Enums.cs" />
-    <Compile Include="Virtion.Util\FileManager.cs" />
-    <Compile Include="Virtion.Util\HttpRequest.cs" />
-    <Compile Include="Virtion.Util\StringHelper.cs" />
-    <Compile Include="Virtion.Util\Structs.cs" />
-    <Compile Include="Virtion.Util\UIHelper.cs" />
-    <Compile Include="Virtion.Util\VirtionVisualTreeHelper.cs" />
-    <Compile Include="Virtion.Util\Win32API.cs" />
-    <Compile Include="Virtion.Util\WWWForm.cs" />
-    <Compile Include="Virtion.Util\WWWTranscoder.cs" />
+    <Compile Include="Util\MD5Helper.cs" />
+    <Compile Include="Util\Time.cs" />
+    <Compile Include="Util\ConsoleHelper.cs" />
+    <Compile Include="Util\Enums.cs" />
+    <Compile Include="Util\FileManager.cs" />
+    <Compile Include="Util\HttpRequest.cs" />
+    <Compile Include="Util\StringHelper.cs" />
+    <Compile Include="Util\Structs.cs" />
+    <Compile Include="Util\UIHelper.cs" />
+    <Compile Include="Util\VirtionVisualTreeHelper.cs" />
+    <Compile Include="Util\Win32API.cs" />
+    <Compile Include="Util\WWWForm.cs" />
+    <Compile Include="Util\WWWTranscoder.cs" />
     <Compile Include="Windows\ChatSettingWindow.xaml.cs">
       <DependentUpon>ChatSettingWindow.xaml</DependentUpon>
     </Compile>

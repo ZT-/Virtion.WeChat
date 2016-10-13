@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using Virtion.WeChat;
-using WeChat;
-using WeChat.Controls.Item;
+using Virtion.WeChat.Controls.Item;
 
-namespace Virtion.Windows
+namespace Virtion.WeChat.Windows
 {
     public partial class MenuWindow : Window
     {

@@ -1,8 +1,9 @@
-﻿<Controls:MetroWindow xmlns:Control="clr-namespace:Virtion.UI.Control" 
-        x:Class="Virtion.WeChat.ChatDialog"
+﻿<Controls:MetroWindow
+    x:Class="Virtion.WeChat.Windows.ChatDialog"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:VControls="clr-namespace:Virtion.WeChat.Controls"
         Height="650" Width="600" 
         WindowStartupLocation="CenterScreen" 
         Loaded="Window_Loaded"
@@ -166,13 +167,11 @@
                  BorderBrush="Black"
                  BorderThickness="1"     
             />
-
             </Grid>
-            <Control:LoadingMask x:Name="LM_Marsk" 
-                                
-                                 Tip="获取列表中"
-                                 />
+            
+            <VControls:LoadingMask x:Name="LM_Marsk" />
+            
         </Grid>
-        
+
     </Grid>
 </Controls:MetroWindow>

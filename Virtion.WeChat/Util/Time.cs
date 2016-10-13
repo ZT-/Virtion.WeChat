@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Virtion.Util
+namespace Virtion.WeChat.Util
 {
     public static class Time
     {

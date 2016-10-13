@@ -1,8 +1,4 @@
-using System;
-using System.Runtime.InteropServices;
-
-
-namespace  Virtion.Util.Native
+namespace  Virtion.WeChat.Util
 {
 	/// <summary>
 	/// Window API enumerations

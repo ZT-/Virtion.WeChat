@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -7,8 +6,9 @@ using System.Net;
 using System.Text;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Newtonsoft.Json;
 
-namespace Virtion.Util
+namespace Virtion.WeChat.Util
 {
     class HttpRequest
     {

@@ -3,8 +3,8 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Windows.Resources;
-using Virtion.Util.Native;
-using Virtion.Windows;
+using Virtion.WeChat.Util;
+using Virtion.WeChat.Windows;
 
 namespace Virtion.WeChat
 {
