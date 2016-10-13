@@ -305,6 +305,21 @@ namespace Virtion.WeChat
             return false;
         }
 
+        private void DealAllFilter(Msg msg)
+        {
+            if (this.CB_Monitor.IsChecked.Value == true && this.chatConfig != null)
+            {
+                if (this.chatConfig.IsFilterMsg == true)
+                {
+                    FilterMaxCountMessage(msg);
+                }
+                if (this.chatConfig.IsFilterUserMsg == true)
+                {
+                    this.FilterUserDefineMessage(msg);
+                }
+            }
+        }
+
         public void ReceiveMessage(Msg msg)
         {
             if (msg.MsgType != 1)
@@ -312,10 +327,7 @@ namespace Virtion.WeChat
 
             if (this.IsGroup() == true)
             {
-                if (this.chatConfig != null && this.chatConfig.IsFilterMsg == true)
-                {
-                    FilterMaxCountMessage(msg);
-                }
+                this.DealAllFilter(msg);
 
                 int pos = msg.Content.IndexOf(":<br/>");
                 if (pos > -1)
@@ -335,12 +347,7 @@ namespace Virtion.WeChat
                 else
                 {
 
-                    TB_Receive.Text +="我：\n"+ msg.Content + "\n";
-                }
-
-                if (this.chatConfig != null && this.chatConfig.IsFilterUserMsg == true)
-                {
-                    this.FilterUserDefineMessage(msg);
+                    TB_Receive.Text += "我：\n" + msg.Content + "\n";
                 }
             }
             else
@@ -545,10 +552,12 @@ namespace Virtion.WeChat
         {
             this.settingWindow = new ChatSettingWindow();
             this.settingWindow.SetConfig(this.chatConfig);
-            this.settingWindow.ShowDialog();
-
-            this.chatConfig = this.settingWindow.GetConfig();
-            this.SaveConfig();
+            this.settingWindow.Show();
+            this.settingWindow.B_OK.Click += (s, events) =>
+            {
+                this.chatConfig = this.settingWindow.GetConfig();
+                this.SaveConfig();
+            };
         }
 
         private void G_Setting_MouseEnter(object sender, MouseEventArgs e)

@@ -87,8 +87,9 @@ namespace Virtion.WeChat.Struct
             while (startPos > -1)
             {
                 var endPos = DisplayName.IndexOf("</span>", StringComparison.Ordinal);
-                DisplayName = DisplayName.Remove(startPos, endPos - startPos + 7);
-                startPos = DisplayName.IndexOf("<span>", StringComparison.Ordinal);
+                string emjio = DisplayName.Substring(startPos, endPos - startPos + 7);
+                DisplayName = DisplayName.Replace(emjio, "[]");
+                startPos = DisplayName.IndexOf("<span", StringComparison.Ordinal);
             }
         }
 

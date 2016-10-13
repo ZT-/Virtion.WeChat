@@ -154,7 +154,7 @@ namespace Virtion.Util
                 StreamReader myStreamReader = new StreamReader(myResponseStream, Encoding.UTF8);
 
                 string s = myStreamReader.ReadToEnd();
-                //Console.WriteLine(s);
+                Console.WriteLine(s);
                 ret = JsonConvert.DeserializeObject<T>(s);
 
                 myStreamReader.Close();

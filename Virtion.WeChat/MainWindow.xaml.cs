@@ -108,7 +108,7 @@ namespace Virtion.WeChat
 
         private void GetLoginInfo()
         {
-            string url = this.RedirectUrl.Replace("https", "http") + "&fun=new";
+            string url = this.RedirectUrl + "&fun=new";
             Console.WriteLine(url);
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
@@ -188,11 +188,12 @@ namespace Virtion.WeChat
 
             foreach (User user in init.ContactList)
             {
-                this.AddSessionList(user);
+                this.AddSessionList(user, false);
             }
 
             if (init == null || init.BaseResponse.Ret != 0)
             {
+                this.GetStatusNotify();
                 MessageBox.Show("初始化失败", "错误");
                 App.Current.Shutdown();
                 //return;
@@ -324,7 +325,7 @@ namespace Virtion.WeChat
             {
                 if (CurrentUser.ContactTable.ContainsKey(item) == true)
                 {
-                    this.AddSessionList(CurrentUser.ContactTable[item]);
+                    this.AddSessionList(CurrentUser.ContactTable[item], false);
                 }
                 else
                 {
@@ -338,9 +339,22 @@ namespace Virtion.WeChat
             if (groupList.Count > 0)
             {
                 var userList = this.GetGroupDetail(groupList);
+
                 foreach (var item in userList)
                 {
-                    this.AddSessionList(item);
+                    if (string.IsNullOrEmpty(item.NickName))
+                    {
+                        for (int i = 0; i < item.MemberList.Length; i++)
+                        {
+                            item.MemberList[i].SetDisplayName();
+                            item.NickName += " " + item.MemberList[i].DisplayName;
+                            if (i > 3)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    this.AddSessionList(item, false);
                 }
             }
         }
@@ -402,11 +416,11 @@ namespace Virtion.WeChat
                     user = CurrentUser.ContactTable[friend];
                 }
 
-                this.AddSessionList(user, !hasWindow);
+                this.AddSessionList(user, true, !hasWindow);
             }
         }
 
-        private void AddSessionList(User user, bool isAddTip = false)
+        private void AddSessionList(User user, bool order = false, bool isAddTip = false)
         {
             if (CurrentUser.ChatTable.ContainsKey(user.UserName) == true)
             {
@@ -417,11 +431,19 @@ namespace Virtion.WeChat
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 ContactListItem listItem = new ContactListItem()
-                  {
-                      DisplayName = user.DisplayName,
-                      User = user
-                  };
-                this.LB_SessionList.Items.Insert(0, listItem);
+                {
+                    DisplayName = user.DisplayName,
+                    User = user
+                };
+                if (order == true)
+                {
+                    this.LB_SessionList.Items.Insert(0, listItem);
+                }
+                else
+                {
+                    this.LB_SessionList.Items.Add(listItem);
+                }
+
                 if (isAddTip == true)
                 {
                     listItem.AddTipNumber();
@@ -506,11 +528,11 @@ namespace Virtion.WeChat
 
             if (!ret.retcode.Equals("0"))
             {
-                MessageBox.Show("由于登录过于频繁系统拒绝登录稍等1分钟重新登录" + ret.retcode, "错误");
+                //MessageBox.Show("由于登录过于频繁系统拒绝登录稍等1分钟重新登录" + ret.retcode, "错误");
                 Dispatcher.BeginInvoke(new Action(() =>
                 {
                     //this.Close();
-                    App.Current.Shutdown();
+                    //App.Current.Shutdown();
                 }));
             }
 
