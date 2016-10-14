@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using Virtion.WeChat.Struct;
 using System.Text;
 using System.Security.Cryptography;
+using Virtion.WeChat.Server;
 
 namespace Virtion.WeChat
 {
@@ -56,7 +57,7 @@ namespace Virtion.WeChat
             }
             else
             {
-                string url = "http://wx.qq.com" + user.HeadImgUrl;
+                string url = WxApi.GetAvatorUrl + user.HeadImgUrl;
                 WebRequest request = WebRequest.Create(url);
                 request.Headers.Add(HttpRequestHeader.Cookie, CurrentUser.Cookie);
                 WebResponse response = request.GetResponse();

@@ -8,6 +8,6 @@ namespace Virtion.WeChat.Struct
     public class WxStatusNotify
     {
         public BaseResponse BaseResponse { get; set; }
-        public long MsgId { get; set; }
+        public string MsgId { get; set; }
     }
 }

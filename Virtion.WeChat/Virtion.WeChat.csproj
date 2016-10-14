@@ -102,6 +102,7 @@
     <Compile Include="Controls\Item\ContactListItem.xaml.cs">
       <DependentUpon>ContactListItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Server\LoginService.cs" />
     <Compile Include="Struct\BaseRequest.cs" />
     <Compile Include="Struct\BaseResponse.cs" />
     <Compile Include="Struct\ChatSetting.cs" />
@@ -139,7 +140,7 @@
     <Compile Include="Windows\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WXApi.cs" />
+    <Compile Include="Server\WXApi.cs" />
     <Page Include="Controls\Item\BaseMenuItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

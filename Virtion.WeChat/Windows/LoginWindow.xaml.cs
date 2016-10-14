@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Virtion.WeChat.Server;
 using Virtion.WeChat.Util;
 
 namespace Virtion.WeChat.Windows
@@ -94,6 +95,10 @@ namespace Virtion.WeChat.Windows
             if (string.IsNullOrEmpty(redirectUrl) == true)
                 return;
 
+            if (this.redirectUrl.IndexOf("wx2") > -1)
+            {
+                WxApi.Server = "wx2";
+            }
             App.MainWindow.RedirectUrl = this.redirectUrl;
 
             this.Close();

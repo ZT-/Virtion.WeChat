@@ -9,6 +9,7 @@ using System.Windows.Media;
 using MahApps.Metro.Controls;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Virtion.WeChat.Server;
 using Virtion.WeChat.Struct;
 using Virtion.WeChat.Util;
 

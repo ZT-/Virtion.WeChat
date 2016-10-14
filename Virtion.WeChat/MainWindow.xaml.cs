@@ -13,6 +13,7 @@ using Virtion.WeChat.Struct;
 using System.Windows.Media;
 using System.Windows.Controls;
 using Virtion.WeChat.Controls.Item;
+using Virtion.WeChat.Server;
 using Virtion.WeChat.Util;
 using Virtion.WeChat.Windows;
 
@@ -21,10 +22,10 @@ namespace Virtion.WeChat
     public partial class MainWindow : MetroWindow
     {
         public static SolidColorBrush HightLightBackgroundBrush
-                 = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3C3C3C"));
+            = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3C3C3C"));
 
         public static SolidColorBrush NormalBackgroundBrush
-                         = new SolidColorBrush(Colors.Transparent);
+            = new SolidColorBrush(Colors.Transparent);
 
         private enum ListType
         {
@@ -40,10 +41,7 @@ namespace Virtion.WeChat
 
         private string configPath
         {
-            get
-            {
-                return App.CurrentPath + "//Data//Config.json";
-            }
+            get { return App.CurrentPath + "//Data//Config.json"; }
         }
 
         public MainWindow()
@@ -106,7 +104,8 @@ namespace Virtion.WeChat
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
             request.ContentType = "text/html;charset=UTF-8";
-            request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36";
+            request.UserAgent =
+                "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36";
             request.ProtocolVersion = HttpVersion.Version10;
             request.KeepAlive = false;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
@@ -156,9 +155,9 @@ namespace Virtion.WeChat
             Console.WriteLine("GetInitInfo");
 
             string url = WxApi.GetInitUrl +
-                "?pass_ticket=" + CurrentUser.PassTicket +
-                "&skey=" + CurrentUser.Skey +
-                "&r=" + Time.Now();
+                         "?pass_ticket=" + CurrentUser.PassTicket +
+                         "&skey=" + CurrentUser.Skey +
+                         "&r=" + Time.Now();
 
             JObject jsonObj = new JObject();
             jsonObj.Add("BaseRequest", JObject.FromObject(CurrentUser.BaseRequest));
@@ -197,10 +196,10 @@ namespace Virtion.WeChat
         {
             long time = Time.Now();
             string url = WxApi.SyncMsgUrl +
-                "pass_ticket=" + CurrentUser.PassTicket +
-                "&sid=" + CurrentUser.WxSid +
-                "&skey=" + CurrentUser.Skey +
-                "&r=" + time;
+                         "pass_ticket=" + CurrentUser.PassTicket +
+                         "&sid=" + CurrentUser.WxSid +
+                         "&skey=" + CurrentUser.Skey +
+                         "&r=" + time;
 
             JObject jsonObj = new JObject();
             jsonObj.Add("BaseRequest", JObject.FromObject(CurrentUser.BaseRequest));
@@ -233,8 +232,8 @@ namespace Virtion.WeChat
         {
             long time = Time.Now();
             string url = WxApi.GetDetailUrl
-                + "type=ex&lang=zh_CN&r=" + time
-                + "&pass_ticket=" + CurrentUser.PassTicket;
+                         + "type=ex&lang=zh_CN&r=" + time
+                         + "&pass_ticket=" + CurrentUser.PassTicket;
 
             JObject jsonObj = new JObject();
             jsonObj.Add("BaseRequest", JObject.FromObject(CurrentUser.BaseRequest));
@@ -353,8 +352,9 @@ namespace Virtion.WeChat
 
         private void ReceiveUserMessgae(Msg msg)
         {
-            string friend = msg.FromUserName.Equals(CurrentUser.Me.UserName) ?
-                                    msg.ToUserName : msg.FromUserName;
+            string friend = msg.FromUserName.Equals(CurrentUser.Me.UserName)
+                ? msg.ToUserName
+                : msg.FromUserName;
 
             //记录消息
             if (!CurrentUser.MessageTable.ContainsKey(friend))
@@ -396,7 +396,7 @@ namespace Virtion.WeChat
                 }
                 //
             }
-            else//add new 
+            else //add new 
             {
                 User user = null;
                 if (CurrentUser.ContactTable.ContainsKey(friend) == false)
@@ -446,9 +446,9 @@ namespace Virtion.WeChat
         private void GetContact()
         {
             string url = WxApi.GetContactUrl +
-                "pass_ticket=" + CurrentUser.PassTicket +
-                "&skey=" + CurrentUser.Skey +
-                "&r=" + Time.Now();
+                         "pass_ticket=" + CurrentUser.PassTicket +
+                         "&skey=" + CurrentUser.Skey +
+                         "&r=" + Time.Now();
 
             HttpRequest.PostJson<WxContact>(url, "", GetContactCallBack, CurrentUser.Cookie);
         }
@@ -464,7 +464,7 @@ namespace Virtion.WeChat
             if (getcontact.BaseResponse.Ret != 0)
             {
                 MessageBox.Show("获取通讯录失败,webwxgetcontact.BaseResponse.Ret:"
-                    + getcontact.BaseResponse.Ret, "错误",
+                                + getcontact.BaseResponse.Ret, "错误",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
@@ -473,10 +473,10 @@ namespace Virtion.WeChat
         {
             long time = Time.Now();
             string url = WxApi.StatusNotifyUrl +
-                "?pass_ticket=" + CurrentUser.PassTicket +
-                "&sid=" + CurrentUser.WxSid +
-                "&skey=" + CurrentUser.Skey +
-                "&r=" + time;
+                         "?pass_ticket=" + CurrentUser.PassTicket +
+                         "&sid=" + CurrentUser.WxSid +
+                         "&skey=" + CurrentUser.Skey +
+                         "&r=" + time;
 
             JObject jsonObj = new JObject();
             jsonObj.Add("BaseRequest", JObject.FromObject(CurrentUser.BaseRequest));
@@ -495,42 +495,50 @@ namespace Virtion.WeChat
         private void SyncCheck()
         {
             string url = WxApi.SyncCheckUrl +
-                "?pass_ticket=" + CurrentUser.PassTicket +
-                "&skey=" + CurrentUser.Skey +
-                "&sid=" + CurrentUser.WxSid +
-                "&uin=" + CurrentUser.WxUin +
-                "&deviceid=" + CurrentUser.DeviceId +
-                "&synckey=" + CurrentUser.Synckey.get_urlstring() +
-                "&_=" + Time.Now();
+                         "?pass_ticket=" + CurrentUser.PassTicket +
+                         "&skey=" + CurrentUser.Skey +
+                         "&sid=" + CurrentUser.WxSid +
+                         "&uin=" + CurrentUser.WxUin +
+                         "&deviceid=" + CurrentUser.DeviceId +
+                         "&synckey=" + CurrentUser.Synckey.get_urlstring() +
+                         "&_=" + Time.Now();
 
-            WebRequest request = WebRequest.Create(url);
-            WebResponse response = request.GetResponse();
-            Stream dataStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(dataStream);
-            string ret_str = reader.ReadToEnd().Split('=')[1];
-            synccheck ret = JsonConvert.DeserializeObject<synccheck>(ret_str);
-
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-
-            Console.WriteLine("同步消息");
-            //Console.WriteLine(url);
-            Console.WriteLine(ret_str);
-
-            if (!ret.retcode.Equals("0"))
+            try
             {
-                MessageBox.Show("由于登录过于频繁系统拒绝登录稍等1分钟重新登录" + ret.retcode, "错误");
-                Dispatcher.BeginInvoke(new Action(() =>
+                WebRequest request = WebRequest.Create(url);
+                WebResponse response = request.GetResponse();
+                Stream dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream);
+                string ret_str = reader.ReadToEnd().Split('=')[1];
+                synccheck ret = JsonConvert.DeserializeObject<synccheck>(ret_str);
+
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+
+                Console.WriteLine("同步消息");
+                //Console.WriteLine(url);
+                Console.WriteLine(ret_str);
+
+                if (!ret.retcode.Equals("0"))
                 {
-                    this.Close();
-                    App.Current.Shutdown();
-                }));
-            }
+                    MessageBox.Show("由于登录过于频繁系统拒绝登录稍等1分钟重新登录" + ret.retcode, "错误");
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        this.Close();
+                        App.Current.Shutdown();
+                    }));
+                }
 
-            if (!ret.selector.Equals("0"))
+                if (!ret.selector.Equals("0"))
+                {
+                    SyncList();
+                }
+            }
+            catch (Exception ex)
             {
-                SyncList();
+                Console.WriteLine(ex);
+                return;
             }
         }
 

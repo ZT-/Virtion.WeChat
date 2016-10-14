@@ -12,13 +12,15 @@
         SnapsToDevicePixels="True"
         UseLayoutRounding="False"
         >
-    <Border 
+    <Border  SnapsToDevicePixels="True"
         Margin="5"
         >
         <StackPanel x:Name="SP_Content"
+          SnapsToDevicePixels="True"         
           Width="100"
           Background="#EEEEEE"
-          Loaded="Grid_Loaded">
+          Loaded="Grid_Loaded"
+          >
 
         </StackPanel>
 
