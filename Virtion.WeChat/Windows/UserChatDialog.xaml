@@ -1,0 +1,109 @@
+﻿<windows:ChatDialog x:Class="Virtion.WeChat.Windows.UserChatDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:windows="clr-namespace:Virtion.WeChat.Windows"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:controls="clr-namespace:Virtion.WeChat.Controls"
+        Title="UserChatDialog"
+        Height="650" Width="600" 
+        WindowStartupLocation="CenterScreen" 
+        GlowBrush="Black"    
+        WindowTitleBrush="#eeeef2"
+        TitleForeground="#454545"
+        WindowMaxButtonStyle="{DynamicResource CommondButtonStyle}"      
+        WindowMinButtonStyle="{DynamicResource CommondButtonStyle}"
+        WindowCloseButtonStyle="{DynamicResource CommondButtonStyle}"             
+        Loaded="UserChatDialog_OnLoaded"
+        Closing="UserChatDialog_OnClosing"   
+        >
+
+    <windows:ChatDialog.Resources>
+        <Style x:Key="CommondButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="46"  />
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Border x:Name="Background" Background="{TemplateBinding Background}" CornerRadius="{Binding (Controls:ControlsHelper.CornerRadius), Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{x:Null}" CornerRadius="{Binding (Controls:ControlsHelper.CornerRadius), Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <Border x:Name="DisabledVisualElement" Background="{DynamicResource ControlsDisabledBrush}" CornerRadius="{Binding (Controls:ControlsHelper.CornerRadius), Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <Controls:ContentControlEx x:Name="PART_ContentPresenter" ContentCharacterCasing="{Binding (Controls:ControlsHelper.ContentCharacterCasing), RelativeSource={RelativeSource TemplatedParent}}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="Background" Value="{DynamicResource GrayBrush8}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" TargetName="Background" Value="{DynamicResource GrayBrush7}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter Property="BorderThickness" TargetName="Border" Value="2"/>
+                                <Setter Property="BorderBrush" TargetName="Border" Value="{DynamicResource ButtonMouseOverBorderBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" TargetName="DisabledVisualElement" Value="0.7"/>
+                                <Setter Property="Opacity" TargetName="PART_ContentPresenter" Value="0.3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </windows:ChatDialog.Resources>
+
+    <Grid x:Name="G_Content">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="450"/>
+            <RowDefinition />
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <TextBox  x:Name="TB_Receive" 
+                 Grid.Row="0" 
+                 VerticalScrollBarVisibility="Auto" 
+                 BorderThickness="1" 
+                 FontSize="14" 
+                 IsReadOnly="True" 
+                 Background="#FFEFF3F7"
+                 BorderBrush="Black"
+                  />
+
+        <TextBox x:Name="TB_SendBox" 
+                Grid.Row="1" 
+                 BorderThickness="1" 
+                 FontSize="14" 
+                 VerticalScrollBarVisibility="Auto" 
+                 AcceptsReturn="True" 
+                 TextWrapping="Wrap"
+                 BorderBrush="Black"
+                 Background="#EEEEEE" 
+                 PreviewKeyDown="TB_SendBox_OnPreviewKeyDown" 
+                 />
+
+        <Grid Grid.Row="2" 
+                  Background="#FFEFF3F7"
+                  >
+            <Label 
+               Name="L_Send" 
+               Content="发送" 
+               Width="100" 
+               HorizontalAlignment="Right" 
+               FontSize="15" 
+               HorizontalContentAlignment="Center" 
+               VerticalContentAlignment="Center" 
+               MouseDown="L_Send_OnMouseDown"
+               Background="#CCC" 
+               MouseEnter="L_Send_OnMouseEnter"
+                MouseLeave="L_Send_OnMouseLeave"
+              />
+        </Grid>
+    </Grid>
+
+</windows:ChatDialog>
+
+
+

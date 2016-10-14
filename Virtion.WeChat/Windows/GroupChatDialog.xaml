@@ -1,9 +1,10 @@
-﻿<Controls:MetroWindow
-    x:Class="Virtion.WeChat.Windows.ChatDialog"
+﻿<windows:ChatDialog
+    x:Class="Virtion.WeChat.Windows.GroupChatDialog"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:VControls="clr-namespace:Virtion.WeChat.Controls"
+        xmlns:windows="clr-namespace:Virtion.WeChat.Windows"
         Height="650" Width="600" 
         WindowStartupLocation="CenterScreen" 
         Loaded="Window_Loaded"
@@ -174,4 +175,4 @@
         </Grid>
 
     </Grid>
-</Controls:MetroWindow>
+</windows:ChatDialog>

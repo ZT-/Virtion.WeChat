@@ -21,23 +21,18 @@ namespace Virtion.WeChat
 {
     public partial class MainWindow : MetroWindow
     {
-        public static SolidColorBrush HightLightBackgroundBrush
-            = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3C3C3C"));
-
-        public static SolidColorBrush NormalBackgroundBrush
-            = new SolidColorBrush(Colors.Transparent);
-
         private enum ListType
         {
             Session,
             Contact
         }
 
-        private BackgroundWorker backgroundWorker;
         public string RedirectUrl;
         public AvatarConverter AvatarConverter;
         public Config Config;
+
         bool isRecieveInitMessage = false;
+        private BackgroundWorker backgroundWorker;
 
         private string configPath
         {
@@ -296,8 +291,8 @@ namespace Virtion.WeChat
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
                         var dailog = CurrentUser.DialogTable[msg.FromUserName];
-                        dailog.GetGroupDetail();
-                        dailog.FilterInvite(msg);
+                        //dailog.GetGroupDetail();
+                        //dailog.FilterInvite(msg);
                     }));
                 }
             }
@@ -522,7 +517,7 @@ namespace Virtion.WeChat
 
                 if (!ret.retcode.Equals("0"))
                 {
-                    MessageBox.Show("由于登录过于频繁系统拒绝登录稍等1分钟重新登录" + ret.retcode, "错误");
+                    MessageBox.Show("由于登录过于频繁, 系统拒绝登录稍等1分钟重新登录" + ret.retcode, "错误");
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
                         this.Close();
@@ -556,7 +551,16 @@ namespace Virtion.WeChat
             }
             else
             {
-                ChatDialog dialog = new ChatDialog(user);
+               ChatDialog dialog = null;
+                if (user.UserName.StartsWith("@@") == true)
+                {
+
+                     dialog = new GroupChatDialog(user);
+                }
+                else
+                {
+                    dialog = new UserChatDialog(user);
+                }
                 CurrentUser.DialogTable.Add(user.UserName, dialog);
                 dialog.Show();
             }
@@ -636,20 +640,6 @@ namespace Virtion.WeChat
             }
         }
 
-        private void I_Mini_Click(object sender, MouseButtonEventArgs e)
-        {
-            Hide();
-        }
-
-        private void I_Close_Click(object sender, MouseButtonEventArgs e)
-        {
-            if (CurrentUser.DialogTable.Count == 0 ||
-                MessageBox.Show("您还有会话窗口未关闭,确认要退出微信?", "提示",
-                MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK)
-            {
-                Application.Current.Shutdown();
-            }
-        }
 
         private void B_Avator_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -681,22 +671,22 @@ namespace Virtion.WeChat
 
         private void B_Chat_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.B_Chat.Background = HightLightBackgroundBrush;
+            this.B_Chat.Background = Theme.HightLightBackgroundBrush;
         }
 
         private void B_Chat_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.B_Chat.Background = NormalBackgroundBrush;
+            this.B_Chat.Background = Theme.NormalBackgroundBrush;
         }
 
         private void B_Contact_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.B_Contact.Background = HightLightBackgroundBrush;
+            this.B_Contact.Background = Theme.HightLightBackgroundBrush;
         }
 
         private void B_Contact_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.B_Contact.Background = NormalBackgroundBrush;
+            this.B_Contact.Background = Theme.NormalBackgroundBrush;
         }
 
         private void TB_Search_TextChanged(object sender, TextChangedEventArgs e)

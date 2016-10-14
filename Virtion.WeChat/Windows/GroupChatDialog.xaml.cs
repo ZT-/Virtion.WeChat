@@ -21,13 +21,8 @@ namespace Virtion.WeChat.Windows
         public string EncryChatRoomId;
     }
 
-    public partial class ChatDialog : MetroWindow
+    public partial class GroupChatDialog : ChatDialog
     {
-        public static SolidColorBrush HightLightBackgroundBrush
-                 = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3C3C3C"));
-
-        public static SolidColorBrush NormalBackgroundBrush
-                         = new SolidColorBrush(Colors.Transparent);
 
         private string configPath
         {
@@ -45,12 +40,11 @@ namespace Virtion.WeChat.Windows
         }
         private ChatSettingWindow settingWindow;
         private ChatConfig chatConfig;
-        private User user;
         private Dictionary<string, string> nameTable;
 
         //private List<User> backUser;
 
-        public ChatDialog(User user)
+        public GroupChatDialog(User user)
         {
             InitializeComponent();
 
@@ -206,7 +200,7 @@ namespace Virtion.WeChat.Windows
 
         private void GetMemberList()
         {
-           this.LM_Marsk.IsLoading = true;
+            this.LM_Marsk.IsLoading = true;
             long time = Time.Now();
             string url = WxApi.GetDetailUrl
                 + "type=ex&lang=zh_CN&r=" + time
@@ -293,14 +287,6 @@ namespace Virtion.WeChat.Windows
             this.LB_MemberList.Items.Remove(this.LB_MemberList.SelectedItem);
         }
 
-        public bool IsGroup()
-        {
-            if (this.user.UserName.StartsWith("@@") == true)
-            {
-                return true;
-            }
-            return false;
-        }
 
         private void DealAllFilter(Msg msg)
         {
@@ -317,42 +303,33 @@ namespace Virtion.WeChat.Windows
             }
         }
 
-        public void ReceiveMessage(Msg msg)
+        public override void ReceiveMessage(Msg msg)
         {
             if (msg.MsgType != 1)
                 return;
 
-            if (this.IsGroup() == true)
-            {
-                this.DealAllFilter(msg);
+            this.DealAllFilter(msg);
 
-                int pos = msg.Content.IndexOf(":<br/>");
-                if (pos > -1)
+            int pos = msg.Content.IndexOf(":<br/>");
+            if (pos > -1)
+            {
+                var userID = msg.Content.Substring(0, pos);
+                if (this.nameTable != null && this.nameTable.ContainsKey(userID) == true)
                 {
-                    var userID = msg.Content.Substring(0, pos);
-                    if (this.nameTable != null && this.nameTable.ContainsKey(userID) == true)
-                    {
-                        TB_Receive.Text += this.nameTable[userID] + ":\n";
-                    }
-                    else
-                    {
-                        TB_Receive.Text += msg.FromUserName + ":\n";
-                    }
-                    var content = msg.Content.Substring(pos + 6);
-                    TB_Receive.Text += content + "\n";
+                    TB_Receive.Text += this.nameTable[userID] + ":\n";
                 }
                 else
                 {
-
-                    TB_Receive.Text += "我：\n" + msg.Content + "\n";
+                    TB_Receive.Text += msg.FromUserName + ":\n";
                 }
+                var content = msg.Content.Substring(pos + 6);
+                TB_Receive.Text += content + "\n";
             }
             else
             {
-                TB_Receive.Text += this.user.DisplayName + ":\n";
-                TB_Receive.Text += msg.Content + "\n";
+
+                TB_Receive.Text += "我：\n" + msg.Content + "\n";
             }
-            TB_Receive.ScrollToEnd();
         }
 
         public void FilterUserDefineMessage(Msg msg)
@@ -377,7 +354,7 @@ namespace Virtion.WeChat.Windows
             }
         }
 
-        public void SendMessage(string word)
+        public override bool SendMessage(string word)
         {
             long time = Time.Now();
             string url = WxApi.SendMessageUrl +
@@ -402,6 +379,7 @@ namespace Virtion.WeChat.Windows
 
             TB_Receive.Text += "我：\n" + msg.Content + "\n";
 
+            return true;
         }
 
         public void FilterMaxCountMessage(Msg msg)
@@ -444,19 +422,9 @@ namespace Virtion.WeChat.Windows
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
-            if (user.UserName.StartsWith("@@") == true)
-            {
-                this.LoadSetting();
-                //this.ShowMemberList();
-                this.GetMemberList();
-            }
-            else
-            {
-                this.G_Content.ColumnDefinitions[1].Width = new GridLength(0);
-                this.G_Setting.Visibility = System.Windows.Visibility.Hidden;
-                this.CB_Monitor.Visibility = System.Windows.Visibility.Hidden;
-            }
+            this.LoadSetting();
+            //this.ShowMemberList();
+            this.GetMemberList();
 
             if (CurrentUser.MessageTable.ContainsKey(user.UserName))
             {
@@ -468,8 +436,8 @@ namespace Virtion.WeChat.Windows
                 }
                 list.Clear();
             }
-
         }
+
         ///白名单漏洞，昵称一样的
         private void AddWhiteMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -537,14 +505,6 @@ namespace Virtion.WeChat.Windows
             }
         }
 
-        private void G_TitleBar_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                this.DragMove();
-            }
-        }
-
         private void I_Setting_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             this.settingWindow = new ChatSettingWindow();
@@ -559,23 +519,22 @@ namespace Virtion.WeChat.Windows
 
         private void G_Setting_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.G_Setting.Background = HightLightBackgroundBrush;
+            this.G_Setting.Background = Theme.HightLightBackgroundBrush;
         }
 
         private void G_Setting_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.G_Setting.Background = NormalBackgroundBrush;
+            this.G_Setting.Background = Theme.NormalBackgroundBrush;
         }
 
         private void L_SendBtn_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.L_SendBtn.Background = HightLightBackgroundBrush;
+            this.L_SendBtn.Background = Theme.HightLightBackgroundBrush;
         }
 
         private void L_SendBtn_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.L_SendBtn.Background
-                = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CCC"));
+            this.L_SendBtn.Background = Theme.HightLightBackgroundBrush;
         }
 
         private void I_Reflash_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
