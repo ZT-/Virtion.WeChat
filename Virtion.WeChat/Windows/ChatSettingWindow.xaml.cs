@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -10,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
 using Virtion.WeChat.Struct;
 
 namespace Virtion.WeChat.Windows
@@ -19,58 +21,32 @@ namespace Virtion.WeChat.Windows
     {
         public bool IsFilterMsg
         {
-            get
-            {
-                return this.CB_IsFilterMsg.IsChecked.Value;
-            }
-            set
-            {
-                this.CB_IsFilterMsg.IsChecked = value;
-            }
+            get { return this.CB_IsFilterMsg.IsChecked.Value; }
+            set { this.CB_IsFilterMsg.IsChecked = value; }
         }
+
         public string MaxMsgLength
         {
-            get
-            {
-                return this.TB_MaxMsgLength.Text;
-            }
-            set
-            {
-                this.TB_MaxMsgLength.Text = value;
-            }
+            get { return this.TB_MaxMsgLength.Text; }
+            set { this.TB_MaxMsgLength.Text = value; }
         }
+
         public bool IsFilterAdd
         {
-            get
-            {
-                return this.CB_IsFilterAdd.IsChecked.Value;
-            }
-            set
-            {
-                this.CB_IsFilterAdd.IsChecked = value;
-            }
+            get { return this.CB_IsFilterAdd.IsChecked.Value; }
+            set { this.CB_IsFilterAdd.IsChecked = value; }
         }
+
         public bool IsFilterSelf
         {
-            get
-            {
-                return this.CB_IsFilterSelf.IsChecked.Value;
-            }
-            set
-            {
-                this.CB_IsFilterSelf.IsChecked = value;
-            }
+            get { return this.CB_IsFilterSelf.IsChecked.Value; }
+            set { this.CB_IsFilterSelf.IsChecked = value; }
         }
+
         public bool IsHightLight
         {
-            get
-            {
-                return this.CB_IsHightLight.IsChecked.Value;
-            }
-            set
-            {
-                this.CB_IsHightLight.IsChecked = value;
-            }
+            get { return this.CB_IsHightLight.IsChecked.Value; }
+            set { this.CB_IsHightLight.IsChecked = value; }
         }
 
         private ChatConfig config;
@@ -111,6 +87,8 @@ namespace Virtion.WeChat.Windows
             this.config.IsFilterSelfDef = this.CB_IsFilterSelf.IsChecked.Value;
             this.config.IsHightLight = this.CB_IsFilterAdd.IsChecked.Value;
             this.config.IsFilterAdd = this.CB_IsFilterAdd.IsChecked.Value;
+
+
             int i = 0;
             if (Int32.TryParse(this.TB_MaxMsgLength.Text, out i) == true)
             {
@@ -164,6 +142,41 @@ namespace Virtion.WeChat.Windows
             this.Close();
         }
 
+        private void MI_Import_OnClick(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.OpenFileDialog dialog = new System.Windows.Forms.OpenFileDialog();
+            dialog.Filter = "配置文件(*.json)|*.json";
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                try
+                {
+                    string s = File.ReadAllText(dialog.FileName);
+                    this.config = JsonConvert.DeserializeObject<ChatConfig>(s);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+        }
+
+        private void MI_Export_OnClick(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            sfd.Filter = "配置文件(*.json)|*.json";
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                try
+                {
+                    var s = JsonConvert.SerializeObject(this.config);
+                    File.WriteAllText(sfd.FileName, s);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+            }
+        }
 
     }
 }

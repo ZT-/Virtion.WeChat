@@ -84,7 +84,7 @@ namespace Virtion.WeChat.Windows
 
         private void L_Send_OnMouseLeave(object sender, MouseEventArgs e)
         {
-            this.L_Send.Background = Theme.HightLightBackgroundBrush;
+            this.L_Send.Background = Theme.NormalBackgroundBrush;
         }
 
         private void L_Send_OnMouseDown(object sender, MouseButtonEventArgs e)

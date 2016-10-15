@@ -111,11 +111,20 @@
                 Checked="CB_Monitor_Checked"
                 />
 
+            <CheckBox x:Name="CB_MonitorOnMini"
+                Margin="90,0"
+                HorizontalAlignment="Left"      
+                Content="关闭后保持监控"
+                Background="Transparent"
+                Unchecked="CB_MonitorOnMini_OnUnchecked"
+                Checked="CB_MonitorOnMini_OnChecked"
+                />
+
             <Grid x:Name="G_Setting"
                   MouseLeftButtonUp="I_Setting_MouseLeftButtonUp" 
                   HorizontalAlignment="Left"
                   VerticalAlignment="Center"
-                  Margin="120,0"
+                  Margin="240,0,0,0"
                   MouseEnter="G_Setting_MouseEnter"
                   MouseLeave="G_Setting_MouseLeave"
                   >

@@ -8,6 +8,7 @@ namespace Virtion.WeChat.Struct
     public class ChatConfig
     {
         public bool IsMonitor;
+        public bool IsMonitorOnMini;
         public string UserMsg;
         public bool IsFilterUserMsg;
         public bool IsFilterMsgCount;
@@ -24,6 +25,7 @@ namespace Virtion.WeChat.Struct
             this.WhiteList = new List<string>();
             this.DefineList = new List<string>();
             this.IsMonitor = false;
+            this.IsMonitorOnMini = false;
             this.IsFilterMsgCount = false;
             this.MaxMsgLength = 500;
             this.IsFilterAdd = false;

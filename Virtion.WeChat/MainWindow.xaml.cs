@@ -30,6 +30,7 @@ namespace Virtion.WeChat
         public string RedirectUrl;
         public AvatarConverter AvatarConverter;
         public Config Config;
+        public NotifyTray NotifyTray;
 
         bool isRecieveInitMessage = false;
         private BackgroundWorker backgroundWorker;
@@ -58,8 +59,8 @@ namespace Virtion.WeChat
 
         private void ShowNotifyIcon()
         {
-            NotifyTray notifyTray = new NotifyTray();
-            notifyTray.InitialTray();
+            NotifyTray = new NotifyTray();
+            NotifyTray.InitialTray();
         }
 
         private void BackgroundWork_DoWork(object sender, DoWorkEventArgs e)

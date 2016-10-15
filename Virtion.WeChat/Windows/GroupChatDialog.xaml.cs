@@ -69,6 +69,7 @@ namespace Virtion.WeChat.Windows
                 string s = File.ReadAllText(this.configPath);
                 this.chatConfig = JsonConvert.DeserializeObject<ChatConfig>(s);
                 this.CB_Monitor.IsChecked = this.chatConfig.IsMonitor;
+                this.CB_MonitorOnMini.IsChecked = this.chatConfig.IsMonitorOnMini;
             }
             else
             {
@@ -264,9 +265,9 @@ namespace Virtion.WeChat.Windows
 
         public void DeleteMenber(User member)
         {
-            if (member == CurrentUser.Me)
+            if (member.PseudoUID == CurrentUser.Me.PseudoUID)
             {
-                MessageBox.Show("不能删除自己");
+                //MessageBox.Show("不能删除自己");
                 return;
             }
 
@@ -284,7 +285,21 @@ namespace Virtion.WeChat.Windows
             Console.WriteLine(jsonObj);
             Object obj = HttpRequest.PostJsonSync<Object>(url, jsonObj);
 
-            this.LB_MemberList.Items.Remove(this.LB_MemberList.SelectedItem);
+            this.TB_Receive.Text += "用户：" + member.DisplayName + "被踢出\n";
+            if (this.LB_MemberList.SelectedItem == null)
+            {
+                foreach (ListBoxItem item in this.LB_MemberList.Items)
+                {
+                    if (item.Content as string == member.DisplayName)
+                    {
+                        this.LB_MemberList.Items.Remove(item);
+                    }
+                }
+            }
+            else
+            {
+                this.LB_MemberList.Items.Remove(this.LB_MemberList.SelectedItem);
+            }
         }
 
 
@@ -308,12 +323,18 @@ namespace Virtion.WeChat.Windows
             if (msg.MsgType != 1)
                 return;
 
-            this.DealAllFilter(msg);
-
             int pos = msg.Content.IndexOf(":<br/>");
             if (pos > -1)
             {
-                var userID = msg.Content.Substring(0, pos);
+                msg.FromUserName = msg.Content.Substring(0, pos);
+                msg.Content = msg.Content.Substring(pos + 6);
+            }
+
+            this.DealAllFilter(msg);
+
+            if (pos > -1)
+            {
+                var userID = msg.FromUserName;
                 if (this.nameTable != null && this.nameTable.ContainsKey(userID) == true)
                 {
                     TB_Receive.Text += this.nameTable[userID] + ":\n";
@@ -322,14 +343,13 @@ namespace Virtion.WeChat.Windows
                 {
                     TB_Receive.Text += msg.FromUserName + ":\n";
                 }
-                var content = msg.Content.Substring(pos + 6);
-                TB_Receive.Text += content + "\n";
+                TB_Receive.Text += msg.Content + "\n";
             }
             else
             {
-
                 TB_Receive.Text += "我：\n" + msg.Content + "\n";
             }
+
         }
 
         public void FilterUserDefineMessage(Msg msg)
@@ -485,7 +505,15 @@ namespace Virtion.WeChat.Windows
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            CurrentUser.DialogTable.Remove(user.UserName);
+            if (this.chatConfig.IsMonitorOnMini == true)
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
+            else
+            {
+                CurrentUser.DialogTable.Remove(user.UserName);
+            }
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -534,7 +562,7 @@ namespace Virtion.WeChat.Windows
 
         private void L_SendBtn_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.L_SendBtn.Background = Theme.HightLightBackgroundBrush;
+            this.L_SendBtn.Background = Theme.NormalBackgroundBrush;
         }
 
         private void I_Reflash_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -553,6 +581,20 @@ namespace Virtion.WeChat.Windows
         {
             this.chatConfig.IsMonitor = false;
             this.SaveConfig();
+        }
+
+        private void CB_MonitorOnMini_OnChecked(object sender, RoutedEventArgs e)
+        {
+            this.chatConfig.IsMonitorOnMini = true;
+            this.SaveConfig();
+            App.MainWindow.NotifyTray.AddMonitorName(user);
+        }
+
+        private void CB_MonitorOnMini_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            this.chatConfig.IsMonitorOnMini = false;
+            this.SaveConfig();
+            App.MainWindow.NotifyTray.RemoveMonitorName(user);
         }
 
     }
