@@ -152,6 +152,7 @@ namespace Virtion.WeChat.Windows
                 {
                     string s = File.ReadAllText(dialog.FileName);
                     this.config = JsonConvert.DeserializeObject<ChatConfig>(s);
+                    this.SetConfig(config);
                 }
                 catch (Exception ex)
                 {

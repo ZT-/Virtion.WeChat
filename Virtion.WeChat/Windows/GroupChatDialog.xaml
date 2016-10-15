@@ -8,7 +8,7 @@
         Height="650" Width="600" 
         WindowStartupLocation="CenterScreen" 
         Loaded="Window_Loaded"
-        Closing="OnClosing" 
+        Closing="GroupChatDialog_OnClosing" 
         GlowBrush="Black"    
         WindowTitleBrush="#eeeef2"
         TitleForeground="#454545"
@@ -55,6 +55,7 @@
     </Controls:MetroWindow.Resources>
     <Grid x:Name="G_Content">
         <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="450"/>
             <RowDefinition />
             <RowDefinition Height="40"/>
@@ -64,8 +65,20 @@
             <ColumnDefinition Width="150" />
         </Grid.ColumnDefinitions>
 
+        <StackPanel Grid.ColumnSpan="2"
+            Orientation="Horizontal"
+            Background="#EEEEEE" 
+            >
+            <Label x:Name="L_Count" 
+                   VerticalAlignment="Center"
+                 />
+            <Label x:Name="L_Owner" 
+                   VerticalAlignment="Center"
+                   />
+        </StackPanel>
+
         <TextBox  x:Name="TB_Receive" 
-                 Grid.Row="0" 
+                 Grid.Row="1" 
                  VerticalScrollBarVisibility="Auto" 
                  BorderThickness="1" 
                  FontSize="14" 
@@ -75,7 +88,7 @@
                   />
 
         <TextBox x:Name="TB_SendBox" 
-                Grid.Row="1" 
+                Grid.Row="2" 
                  BorderThickness="1" 
                  FontSize="14" 
                  VerticalScrollBarVisibility="Auto" 
@@ -83,10 +96,10 @@
                  TextWrapping="Wrap"
                  BorderBrush="Black"
                  Background="#EEEEEE" 
-                 PreviewKeyDown="OnKeyDown" 
+                 PreviewKeyDown="TB_SendBox_OnKeyDown" 
                  />
 
-        <Grid Grid.Row="2" 
+        <Grid Grid.Row="3" 
                   Background="#FFEFF3F7"
                   >
             <Label 
@@ -97,7 +110,7 @@
                FontSize="15" 
                HorizontalContentAlignment="Center" 
                VerticalContentAlignment="Center" 
-               MouseDown="Send"
+               MouseDown="L_Send_MouseDown"
                Background="#CCC" 
                MouseEnter="L_SendBtn_MouseEnter"
                 MouseLeave="L_SendBtn_MouseLeave"
@@ -141,7 +154,7 @@
         </Grid>
 
         <Grid Grid.Column="1"
-                 Grid.Row="0"
+                 Grid.Row="1"
                  Grid.RowSpan="3"
             >
             <Grid  >
@@ -178,9 +191,9 @@
                  BorderThickness="1"     
             />
             </Grid>
-            
+
             <VControls:LoadingMask x:Name="LM_Marsk" />
-            
+
         </Grid>
 
     </Grid>

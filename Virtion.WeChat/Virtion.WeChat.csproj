@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="Theme.cs" />
     <Compile Include="Util\MD5Helper.cs" />
+    <Compile Include="Util\PinYinConverter.cs" />
     <Compile Include="Util\Time.cs" />
     <Compile Include="Util\ConsoleHelper.cs" />
     <Compile Include="Util\Enums.cs" />

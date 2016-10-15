@@ -292,8 +292,15 @@ namespace Virtion.WeChat
                     Dispatcher.BeginInvoke(new Action(() =>
                     {
                         var dailog = CurrentUser.DialogTable[msg.FromUserName];
-                        //dailog.GetGroupDetail();
-                        //dailog.FilterInvite(msg);
+                        if (dailog is GroupChatDialog)
+                        {
+                            var gourpDailog = dailog as GroupChatDialog;
+                            gourpDailog.GetGroupDetail();
+                            if (msg.Status == 3)
+                            {
+                                gourpDailog.FilterInvite(msg);
+                            }
+                        }
                     }));
                 }
             }
@@ -548,15 +555,17 @@ namespace Virtion.WeChat
 
             if (CurrentUser.DialogTable.ContainsKey(user.UserName))
             {
-                CurrentUser.DialogTable[user.UserName].Activate();
+                var dailog = CurrentUser.DialogTable[user.UserName];
+                dailog.Show();
+                dailog.Activate();
             }
             else
             {
-               ChatDialog dialog = null;
+                ChatDialog dialog = null;
                 if (user.UserName.StartsWith("@@") == true)
                 {
 
-                     dialog = new GroupChatDialog(user);
+                    dialog = new GroupChatDialog(user);
                 }
                 else
                 {
@@ -708,7 +717,30 @@ namespace Virtion.WeChat
             list.Items.Clear();
             foreach (var item in dataList)
             {
-                if (item.Value.DisplayName.IndexOf(this.TB_Search.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                string name = item.Value.DisplayName;
+                if (name.IndexOf(this.TB_Search.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    ContactListItem listItem = new ContactListItem()
+                    {
+                        DisplayName = item.Value.DisplayName,
+                        User = item.Value
+                    };
+                    list.Items.Add(listItem);
+                    continue;
+                }
+
+                if (PinYinConverter.Get(name).ToLower().IndexOf(this.TB_Search.Text.ToLower(), StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    ContactListItem listItem = new ContactListItem()
+                    {
+                        DisplayName = item.Value.DisplayName,
+                        User = item.Value
+                    };
+                    list.Items.Add(listItem);
+                    continue;
+                }
+
+                if (PinYinConverter.GetFirst(name).ToLower().IndexOf(this.TB_Search.Text.ToLower(), StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     ContactListItem listItem = new ContactListItem()
                     {
@@ -717,6 +749,7 @@ namespace Virtion.WeChat
                     };
                     list.Items.Add(listItem);
                 }
+
             }
         }
         #endregion

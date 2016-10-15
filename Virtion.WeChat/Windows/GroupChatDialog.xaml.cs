@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Windows;
@@ -23,7 +24,6 @@ namespace Virtion.WeChat.Windows
 
     public partial class GroupChatDialog : ChatDialog
     {
-
         private string configPath
         {
             get
@@ -62,63 +62,6 @@ namespace Virtion.WeChat.Windows
             base.Show();
         }
 
-        private void LoadSetting()
-        {
-            if (File.Exists(this.configPath) == true)
-            {
-                string s = File.ReadAllText(this.configPath);
-                this.chatConfig = JsonConvert.DeserializeObject<ChatConfig>(s);
-                this.CB_Monitor.IsChecked = this.chatConfig.IsMonitor;
-                this.CB_MonitorOnMini.IsChecked = this.chatConfig.IsMonitorOnMini;
-            }
-            else
-            {
-                this.chatConfig = new ChatConfig();
-
-            }
-        }
-
-        public void FilterInvite(Msg msg)
-        {
-            var content = msg.Content;
-            //if (content.StartsWith("You've ") == true)
-            //{
-            //    return;
-            //}
-            int endPos = content.IndexOf(" to the group chat");
-            if (endPos == -1)
-            {
-                return;
-            }
-            string midWord = " invited ";
-            int midPos = content.IndexOf(midWord);
-            if (endPos == -1)
-            {
-                return;
-            }
-            var firstUserName = content.Substring(0, midPos);
-            var secondUserName = content.Substring(midPos + midWord.Length,
-                endPos - (midPos + midWord.Length));
-
-            var firstUser = this.FindUserByDisplayName(firstUserName);
-            var secondUser = this.FindUserByDisplayName(secondUserName);
-
-            if (this.IsWhiteList(user) == true)
-            {
-                return;
-            }
-
-            if (this.chatConfig.IsFilterAdd == true || secondUser != null)
-            {
-                this.DeleteMenber(firstUser);
-            }
-
-            if (this.chatConfig.IsFilterSelfDef == true || firstUser != null)
-            {
-                this.DeleteMenber(firstUser);
-            }
-        }
-
         private User FindUserByDisplayName(string name)
         {
             foreach (ListBoxItem item in this.LB_MemberList.Items)
@@ -144,28 +87,10 @@ namespace Virtion.WeChat.Windows
             return false;
         }
 
-        private void FilterWhiteList(User user)
-        {
-            foreach (var item in this.whiteList)
-            {
-                if (item == user.PseudoUID)
-                {
-                    ListBoxItem listItem = new ListBoxItem()
-                    {
-                        Content = user.DisplayName,
-                        DataContext = user
-                    };
-                    this.LB_WhiteList.Items.Add(listItem);
-                    break;
-                }
-            }
-        }
-
-
         private void ShowMemberList(User[] list)
         {
             this.nameTable = new Dictionary<string, string>();
-
+            this.L_Count.Content = "本群共有（" + list.Length + "）人";
             this.LB_WhiteList.Items.Clear();
             this.LB_MemberList.Items.Clear();
             foreach (var item in list)
@@ -285,11 +210,12 @@ namespace Virtion.WeChat.Windows
             Console.WriteLine(jsonObj);
             Object obj = HttpRequest.PostJsonSync<Object>(url, jsonObj);
 
-            this.TB_Receive.Text += "用户：" + member.DisplayName + "被踢出\n";
+            this.TB_Receive.Text += "用户【" + member.DisplayName + "】 被踢出！\n";
             if (this.LB_MemberList.SelectedItem == null)
             {
-                foreach (ListBoxItem item in this.LB_MemberList.Items)
+                for (int i = 0; i < this.LB_MemberList.Items.Count; i++)
                 {
+                    ListBoxItem item = this.LB_MemberList.Items[i] as ListBoxItem;
                     if (item.Content as string == member.DisplayName)
                     {
                         this.LB_MemberList.Items.Remove(item);
@@ -299,22 +225,6 @@ namespace Virtion.WeChat.Windows
             else
             {
                 this.LB_MemberList.Items.Remove(this.LB_MemberList.SelectedItem);
-            }
-        }
-
-
-        private void DealAllFilter(Msg msg)
-        {
-            if (this.CB_Monitor.IsChecked.Value == true && this.chatConfig != null)
-            {
-                if (this.chatConfig.IsFilterMsgCount == true)
-                {
-                    FilterMaxCountMessage(msg);
-                }
-                if (this.chatConfig.IsFilterUserMsg == true)
-                {
-                    this.FilterUserDefineMessage(msg);
-                }
             }
         }
 
@@ -352,28 +262,6 @@ namespace Virtion.WeChat.Windows
 
         }
 
-        public void FilterUserDefineMessage(Msg msg)
-        {
-            if (msg.Content.IndexOf(this.chatConfig.UserMsg) > -1)
-            {
-                var random = new Random();
-                var index = random.Next(this.chatConfig.DefineList.Count);
-
-                var thread = new Thread(() =>
-                {
-                    if (this.chatConfig.Delay > 0)
-                    {
-                        Thread.Sleep(this.chatConfig.Delay);
-                    }
-                    Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        this.SendMessage(this.chatConfig.DefineList[index]);
-                    }));
-                });
-                thread.Start();
-            }
-        }
-
         public override bool SendMessage(string word)
         {
             long time = Time.Now();
@@ -402,6 +290,46 @@ namespace Virtion.WeChat.Windows
             return true;
         }
 
+
+
+        #region Filter
+        private void DealAllFilter(Msg msg)
+        {
+            if (this.CB_Monitor.IsChecked.Value == true && this.chatConfig != null)
+            {
+                if (this.chatConfig.IsFilterMsgCount == true)
+                {
+                    FilterMaxCountMessage(msg);
+                }
+                if (this.chatConfig.IsFilterUserMsg == true)
+                {
+                    this.FilterUserDefineMessage(msg);
+                }
+            }
+        }
+
+        public void FilterUserDefineMessage(Msg msg)
+        {
+            if (msg.Content.IndexOf(this.chatConfig.UserMsg) > -1)
+            {
+                var random = new Random();
+                var index = random.Next(this.chatConfig.DefineList.Count);
+
+                var thread = new Thread(() =>
+                {
+                    if (this.chatConfig.Delay > 0)
+                    {
+                        Thread.Sleep(this.chatConfig.Delay);
+                    }
+                    Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        this.SendMessage(this.chatConfig.DefineList[index]);
+                    }));
+                });
+                thread.Start();
+            }
+        }
+
         public void FilterMaxCountMessage(Msg msg)
         {
             if (msg.Content.Length > this.chatConfig.MaxMsgLength)
@@ -422,9 +350,81 @@ namespace Virtion.WeChat.Windows
             }
         }
 
-        public void Send(object sender, MouseButtonEventArgs e)
+        public void FilterInvite(Msg msg)
         {
-            this.SendMessage(TB_SendBox.Text.Replace("\r", ""));
+            var content = msg.Content;
+            //if (content.StartsWith("You've ") == true)
+            //{
+            //    return;
+            //}
+            int endPos = content.IndexOf(" to the group chat");
+            if (endPos == -1)
+            {
+                return;
+            }
+            string midWord = " invited ";
+            int midPos = content.IndexOf(midWord);
+            if (endPos == -1)
+            {
+                return;
+            }
+            var firstUserName = content.Substring(0, midPos);
+            var secondUserName = content.Substring(midPos + midWord.Length,
+                endPos - (midPos + midWord.Length));
+
+            var firstUser = this.FindUserByDisplayName(firstUserName);
+            var secondUser = this.FindUserByDisplayName(secondUserName);
+
+            if (this.IsWhiteList(user) == true)
+            {
+                return;
+            }
+
+            if (this.chatConfig.IsFilterAdd == true || secondUser != null)
+            {
+                this.DeleteMenber(firstUser);
+            }
+
+            if (this.chatConfig.IsFilterSelfDef == true || firstUser != null)
+            {
+                this.DeleteMenber(firstUser);
+            }
+        }
+
+        private void FilterWhiteList(User user)
+        {
+            foreach (var item in this.whiteList)
+            {
+                if (item == user.PseudoUID)
+                {
+                    ListBoxItem listItem = new ListBoxItem()
+                    {
+                        Content = user.DisplayName,
+                        DataContext = user
+                    };
+                    this.LB_WhiteList.Items.Add(listItem);
+                    break;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Config
+        private void LoadSetting()
+        {
+            if (File.Exists(this.configPath) == true)
+            {
+                string s = File.ReadAllText(this.configPath);
+                this.chatConfig = JsonConvert.DeserializeObject<ChatConfig>(s);
+                this.CB_Monitor.IsChecked = this.chatConfig.IsMonitor;
+                this.CB_MonitorOnMini.IsChecked = this.chatConfig.IsMonitorOnMini;
+            }
+            else
+            {
+                this.chatConfig = new ChatConfig();
+
+            }
         }
 
         private void SaveConfig()
@@ -440,6 +440,9 @@ namespace Virtion.WeChat.Windows
             }
         }
 
+        #endregion
+
+        #region Event
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.LoadSetting();
@@ -503,20 +506,7 @@ namespace Virtion.WeChat.Windows
             this.DeleteMenber(data);
         }
 
-        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (this.chatConfig.IsMonitorOnMini == true)
-            {
-                e.Cancel = true;
-                this.Hide();
-            }
-            else
-            {
-                CurrentUser.DialogTable.Remove(user.UserName);
-            }
-        }
-
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void TB_SendBox_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && (Keyboard.Modifiers & (ModifierKeys.Control)) == (ModifierKeys.Control))
             {
@@ -528,7 +518,7 @@ namespace Virtion.WeChat.Windows
             }
             else if (e.Key == Key.Enter)
             {
-                Send(null, null);
+                L_Send_MouseDown(null, null);
                 e.Handled = true;
             }
         }
@@ -565,10 +555,15 @@ namespace Virtion.WeChat.Windows
             this.L_SendBtn.Background = Theme.NormalBackgroundBrush;
         }
 
+        public void L_Send_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.SendMessage(TB_SendBox.Text.Replace("\r", ""));
+        }
+
         private void I_Reflash_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             this.GetGroupDetail();
-            this.GetMemberList();
+            //this.GetMemberList();
         }
 
         private void CB_Monitor_Checked(object sender, RoutedEventArgs e)
@@ -596,6 +591,21 @@ namespace Virtion.WeChat.Windows
             this.SaveConfig();
             App.MainWindow.NotifyTray.RemoveMonitorName(user);
         }
+
+        private void GroupChatDialog_OnClosing(object sender, CancelEventArgs e)
+        {
+            if (this.chatConfig.IsMonitorOnMini == true)
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
+            else
+            {
+                CurrentUser.DialogTable.Remove(user.UserName);
+            }
+        }
+
+        #endregion
 
     }
 }
