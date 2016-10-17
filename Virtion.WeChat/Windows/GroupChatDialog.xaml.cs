@@ -291,7 +291,6 @@ namespace Virtion.WeChat.Windows
         }
 
 
-
         #region Filter
         private void DealAllFilter(Msg msg)
         {

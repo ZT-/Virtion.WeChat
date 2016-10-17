@@ -113,7 +113,9 @@
                     <TextBlock Text="用户白名单:"   
                                VerticalAlignment="Center"
                                Margin="5,0,0,0"
-                               Grid.Row="3"/>
+                               Grid.Row="3"
+                               Visibility="Hidden"
+                               />
 
                     <ListBox x:Name="LB_White"
                        Grid.Row="4"

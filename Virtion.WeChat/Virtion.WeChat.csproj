@@ -103,6 +103,62 @@
       <DependentUpon>ContactListItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Server\LoginService.cs" />
+    <Compile Include="Server\RPC\BaseRequest.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\RPC\BaseResponse.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\RPC\BatchGetContactRequest.cs" />
+    <Compile Include="Server\RPC\BatchGetContactResponse.cs" />
+    <Compile Include="Server\RPC\GetContactResponse.cs" />
+    <Compile Include="Server\RPC\InitRequest.cs" />
+    <Compile Include="Server\RPC\initResponse.cs" />
+    <Compile Include="Server\RPC\LoginRedirectResult.cs" />
+    <Compile Include="Server\RPC\LoginResult.cs" />
+    <Compile Include="Server\RPC\OplogRequest.cs" />
+    <Compile Include="Server\RPC\OplogResponse.cs" />
+    <Compile Include="Server\RPC\SendMsgImgRequest.cs" />
+    <Compile Include="Server\RPC\SendMsgImgResponse.cs" />
+    <Compile Include="Server\RPC\SendMsgRequest.cs" />
+    <Compile Include="Server\RPC\SendMsgResponse.cs" />
+    <Compile Include="Server\RPC\StatusnotifyRequest.cs" />
+    <Compile Include="Server\RPC\StatusnotifyResponse.cs" />
+    <Compile Include="Server\RPC\SyncCheckResponse.cs" />
+    <Compile Include="Server\RPC\SyncRequest.cs" />
+    <Compile Include="Server\RPC\SyncResponse.cs" />
+    <Compile Include="Server\RPC\UploadmediaRequest.cs" />
+    <Compile Include="Server\RPC\UploadmediaResponse.cs" />
+    <Compile Include="Server\WechatAPIService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\WXApi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\Wx\AddMsg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\Wx\AppInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\Wx\BatchUser.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\Wx\ImgMsg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\Wx\Msg.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\Wx\RecommendInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\Wx\SyncKey.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Server\Wx\User.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Struct\BaseRequest.cs" />
     <Compile Include="Struct\BaseResponse.cs" />
     <Compile Include="Struct\ChatSetting.cs" />
@@ -122,6 +178,7 @@
       <DependentUpon>LoadingMask.xaml</DependentUpon>
     </Compile>
     <Compile Include="Theme.cs" />
+    <Compile Include="Util\HttpClient.cs" />
     <Compile Include="Util\MD5Helper.cs" />
     <Compile Include="Util\PinYinConverter.cs" />
     <Compile Include="Util\Time.cs" />
@@ -132,6 +189,7 @@
     <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\Structs.cs" />
     <Compile Include="Util\UIHelper.cs" />
+    <Compile Include="Util\UniversalTool.cs" />
     <Compile Include="Util\VirtionVisualTreeHelper.cs" />
     <Compile Include="Util\Win32API.cs" />
     <Compile Include="Util\WWWForm.cs" />
@@ -143,7 +201,6 @@
     <Compile Include="Windows\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Server\WXApi.cs" />
     <Compile Include="Windows\UserChatDialog.xaml.cs">
       <DependentUpon>UserChatDialog.xaml</DependentUpon>
     </Compile>

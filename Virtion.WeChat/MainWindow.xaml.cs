@@ -21,12 +21,6 @@ namespace Virtion.WeChat
 {
     public partial class MainWindow : MetroWindow
     {
-        private enum ListType
-        {
-            Session,
-            Contact
-        }
-
         public string RedirectUrl;
         public AvatarConverter AvatarConverter;
         public Config Config;
