@@ -1,9 +1,15 @@
 ﻿using System.Windows;
+using GalaSoft.MvvmLight.Threading;
 
 namespace Virtion.WeChat
 {
     public partial class App : Application
     {
+        public App()
+        {
+            DispatcherHelper.Initialize();
+        }
+
         public const string Version = " - V 1.0";
         private static string path = "";
         public new static MainWindow MainWindow
