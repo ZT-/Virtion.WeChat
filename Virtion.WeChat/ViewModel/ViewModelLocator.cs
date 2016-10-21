@@ -5,7 +5,6 @@ using Virtion.WeChat.Windows;
 
 namespace Virtion.WeChat.ViewModel
 {
-
     public class ViewModelLocator
     {
         public ViewModelLocator()

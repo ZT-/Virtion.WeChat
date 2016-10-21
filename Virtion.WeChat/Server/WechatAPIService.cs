@@ -1,24 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wechat.API.Http;
-using Wechat.API.RPC;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
+using System.Net;
+using System.Text;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Collections.Specialized;
-using System.Security.Cryptography;
-using Wechat.Tools;
+using Virtion.WeChat.Server.Wx;
+using Virtion.WeChat.Util;
+using Wechat.API;
+using Wechat.API.RPC;
 
-namespace Wechat.API
+namespace Virtion.WeChat.Server
 {
-    public class WechatAPIService
+    public class WechatApiService
     {
         HttpClient http;
-        public WechatAPIService(HttpClient httpClient)
+        public static string Server = "wx";//wx, wx2
+
+        public static string GetAvatorUrl
+        {
+            get
+            {
+                return "http://" + Server + ".qq.com";
+            }
+        }
+
+        public WechatApiService(HttpClient httpClient)
         {
             http = httpClient;
         }
@@ -27,66 +38,77 @@ namespace Wechat.API
         /// 获得二维码登录SessionID,使用此ID可以获得登录二维码
         /// </summary>
         /// <returns>Session</returns>
-        public string GetNewQRLoginSessionID()
+        public string GetNewQrLoginSessionId()
         {
             //respone like this => window.QRLogin.code = 200; window.QRLogin.uuid = "Qa_GBH_IqA==";
             string url = "https://login.weixin.qq.com/jslogin?appid=wx782c26e4c19acffb";
             byte[] bytes = http.GET(url);
             string str = Encoding.UTF8.GetString(bytes);
-            string sessionID = str.Split(new string[] { "\"" }, StringSplitOptions.None)[1];
-            return sessionID;
+            if (str == "\0")
+            {
+                MessageBox.Show("网络错误");
+                App.Current.Shutdown();
+            }
+            string sessionId = str.Split(new string[] { "\"" }, StringSplitOptions.None)[1];
+            return sessionId;
         }
 
         /// <summary>
         /// 获得登录二维码URL
         /// </summary>
-        /// <param name="QRLoginSessionID"></param>
+        /// <param name="qrLoginSessionId"></param>
         /// <returns></returns>
-        public string GetQRCodeUrl(string QRLoginSessionID)
+        public string GetQrCodeUrl(string qrLoginSessionId)
         {
-            string url = "https://login.weixin.qq.com/qrcode/" + QRLoginSessionID;
+            string url = "https://login.weixin.qq.com/qrcode/" + qrLoginSessionId;
             return url;
         }
 
         /// <summary>
         /// 获得登录二维码图片
         /// </summary>
-        /// <param name="QRLoginSessionID"></param>
+        /// <param name="qrLoginSessionId"></param>
         /// <returns></returns>
-        public Image GetQRCodeImage(string QRLoginSessionID)
+        public string GetQrCodeImage(string qrLoginSessionId)
         {
-            string url = GetQRCodeUrl(QRLoginSessionID);
-            var bytes = http.GET(url);
-            return Image.FromStream(new MemoryStream(bytes));
+            string url = GetQrCodeUrl(qrLoginSessionId);
+
+            //var bytes = http.GET(url);
+            return url; //Image.FromStream(new MemoryStream(bytes));
         }
 
         /// <summary>
         /// 登录检查
         /// </summary>
-        /// <param name="QRLoginSessionID"></param>
+        /// <param name="qrLoginSessionId"></param>
         /// <returns></returns>
-        public LoginResult Login(string QRLoginSessionID)
+        public LoginResult Login(string qrLoginSessionId)
         {
-            string url = "https://login.weixin.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=" + QRLoginSessionID;
+            string url = "https://login.weixin.qq.com/cgi-bin/mmwebwx-bin/login?loginicon=true&uuid=" + qrLoginSessionId;
             byte[] bytes = http.GET(url);
-            string login_result = Encoding.UTF8.GetString(bytes);
+            string loginResult = Encoding.UTF8.GetString(bytes);
             LoginResult result = new LoginResult();
             result.code = 408;
-            if (login_result.Contains("window.code=201")) //已扫描 未登录
+            if (loginResult.Contains("window.code=201")) //已扫描 未登录
             {
-                var arr = login_result.Split(new string[] { "\'" }, StringSplitOptions.None);
+                var arr = loginResult.Split(new string[] { "\'" }, StringSplitOptions.None);
                 if (arr.Length > 1)
                 {
-                    string base64_image = arr[1].Split(',')[1];
-                    result.UserAvatar = base64_image;
+                    string base64Image = arr[1].Split(',')[1];
+                    result.UserAvatar = base64Image;
                 }
                 result.code = 201;
             }
-            else if (login_result.Contains("window.code=200"))  //已扫描 已登录
+            else if (loginResult.Contains("window.code=200"))  //已扫描 已登录
             {
-                string login_redirect_url = login_result.Split(new string[] { "\"" }, StringSplitOptions.None)[1];
+                string loginRedirectUrl = loginResult.Split(new string[] { "\"" }, StringSplitOptions.None)[1];
                 result.code = 200;
-                result.redirect_uri = login_redirect_url;
+                result.redirect_uri = loginRedirectUrl;
+
+                if (loginRedirectUrl.IndexOf("wx2") > -1)
+                {
+                    Server = "wx2";
+                }
             }
 
             return result;
@@ -109,16 +131,13 @@ namespace Wechat.API
         /// <summary>
         /// 初始化
         /// </summary>
-        /// <param name="pass_ticket"></param>
-        /// <param name="uin"></param>
-        /// <param name="sid"></param>
-        /// <param name="skey"></param>
-        /// <param name="deviceID"></param>
-        /// <returns></returns>
-        public InitResponse Init(string pass_ticket, BaseRequest baseReq)
+        /// <param name="passTicket"></param>
+        /// <param name="baseReq"></param>
+        /// <returns>InitResponse</returns>
+        public InitResponse Init(string passTicket, BaseRequest baseReq)
         {
-            string url = "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxinit?r={0}&pass_ticket={1}";
-            url = string.Format(url, getTimestamp(DateTime.Now), pass_ticket);
+            string url = "https://" + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxinit?r={0}&pass_ticket={1}";
+            url = string.Format(url, GetTimestamp(DateTime.Now), passTicket);
             InitRequest initReq = new InitRequest();
             initReq.BaseRequest = baseReq;
             string requestJson = JsonConvert.SerializeObject(initReq);
@@ -130,14 +149,13 @@ namespace Wechat.API
         /// <summary>
         /// 获得联系人列表
         /// </summary>
-        /// <param name="pass_ticket"></param>
+        /// <param name="passTicket"></param>
         /// <param name="skey"></param>
         /// <returns></returns>
-
-        public GetContactResponse GetContact(string pass_ticket, string skey)
+        public GetContactResponse GetContact(string passTicket, string skey)
         {
-            string url = "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?pass_ticket={0}&r={1}&seq=0&skey={2}";
-            url = string.Format(url, pass_ticket, getTimestamp(DateTime.Now), skey);
+            string url = "https://" + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxgetcontact?pass_ticket={0}&r={1}&seq=0&skey={2}";
+            url = string.Format(url, passTicket, GetTimestamp(DateTime.Now), skey);
             string json = http.GET_UTF8String(url);
             var rep = JsonConvert.DeserializeObject<GetContactResponse>(json);
             return rep;
@@ -147,16 +165,13 @@ namespace Wechat.API
         /// 批量获取联系人详细信息
         /// </summary>
         /// <param name="requestContacts"></param>
-        /// <param name="pass_ticket"></param>
-        /// <param name="uin"></param>
-        /// <param name="sid"></param>
-        /// <param name="skey"></param>
-        /// <param name="deviceID"></param>
+        /// <param name="passTicket"></param>
+        /// <param name="baseReq"></param>
         /// <returns></returns>
-        public BatchGetContactResponse BatchGetContact(string[] requestContacts, string pass_ticket, BaseRequest baseReq)
+        public BatchGetContactResponse BatchGetContact(string[] requestContacts, string passTicket, BaseRequest baseReq)
         {
-            string url = "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={0}&lang=zh_CN&pass_ticket={1}";
-            url = string.Format(url, getTimestamp(DateTime.Now), pass_ticket);
+            string url = "https://" + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxbatchgetcontact?type=ex&r={0}&lang=zh_CN&pass_ticket={1}";
+            url = string.Format(url, GetTimestamp(DateTime.Now), passTicket);
 
             BatchGetContactRequest req = new BatchGetContactRequest();
             req.BaseRequest = baseReq;
@@ -177,6 +192,7 @@ namespace Wechat.API
             return rep;
         }
 
+
         public SyncCheckResponse SyncCheck(SyncItem[] syncItems, BaseRequest baseReq)
         {
             string synckey = "";
@@ -188,8 +204,8 @@ namespace Wechat.API
                 }
                 synckey += syncItems[i].Key + "_" + syncItems[i].Val;
             }
-            string url = "https://webpush.wx2.qq.com/cgi-bin/mmwebwx-bin/synccheck?skey={0}&sid={1}&uin={2}&deviceid={3}&synckey={4}&_={5}&r={6}";
-            url = string.Format(url, baseReq.Skey.Replace("@", "%40"), baseReq.Sid, baseReq.Uin, baseReq.DeviceID, synckey, getTimestamp(DateTime.Now) - 10, getTimestamp(DateTime.Now));
+            string url = "https://webpush." + Server + ".qq.com/cgi-bin/mmwebwx-bin/synccheck?skey={0}&sid={1}&uin={2}&deviceid={3}&synckey={4}&_={5}&r={6}";
+            url = string.Format(url, baseReq.Skey.Replace("@", "%40"), baseReq.Sid, baseReq.Uin, baseReq.DeviceID, synckey, GetTimestamp(DateTime.Now) - 10, GetTimestamp(DateTime.Now));
             string repStr = http.GET_UTF8String(url);
             SyncCheckResponse rep = new SyncCheckResponse();
             if (repStr.StartsWith("window.synccheck="))
@@ -201,19 +217,19 @@ namespace Wechat.API
             return rep;
         }
 
-        static long getTimestamp(DateTime time)
+        private static long GetTimestamp(DateTime time)
         {
             return (long)(time.ToUniversalTime() - new System.DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
         public SyncResponse Sync(SyncKey syncKey, string pass_ticket, BaseRequest baseReq)
         {
-            string url = "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={0}&skey={1}&lang=zh_CN&pass_ticket={2}";
+            string url = "https://" + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxsync?sid={0}&skey={1}&lang=zh_CN&pass_ticket={2}";
             url = string.Format(url, baseReq.Sid, baseReq.Skey, pass_ticket);
             SyncRequest req = new SyncRequest();
             req.BaseRequest = baseReq;
             req.SyncKey = syncKey;
-            req.rr = getTimestamp(DateTime.Now);
+            req.rr = GetTimestamp(DateTime.Now);
             string requestJson = JsonConvert.SerializeObject(req);
             string repJsonStr = http.POST_UTF8String(url, requestJson);
             var rep = JsonConvert.DeserializeObject<SyncResponse>(repJsonStr);
@@ -222,10 +238,10 @@ namespace Wechat.API
 
         public StatusnotifyResponse Statusnotify(string formUser, string toUser, string pass_ticket, BaseRequest baseReq)
         {
-            string url = "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxstatusnotify?lang=zh_CN&pass_ticket=" + pass_ticket;
+            string url = "https://" + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxstatusnotify?lang=zh_CN&pass_ticket=" + pass_ticket;
             StatusnotifyRequest req = new StatusnotifyRequest();
             req.BaseRequest = baseReq;
-            req.ClientMsgId = getTimestamp(DateTime.Now);
+            req.ClientMsgId = GetTimestamp(DateTime.Now);
             req.FromUserName = formUser;
             req.ToUserName = toUser;
             req.Code = 3;
@@ -237,8 +253,8 @@ namespace Wechat.API
 
         public SendMsgResponse SendMsg(Msg msg, string passTicket, BaseRequest baseReq)
         {
-            string url = "https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?sid={0}&r={1}&lang=zh_CN&pass_ticket={2}";
-            url = string.Format(url, baseReq.Sid, getTimestamp(DateTime.Now), passTicket);
+            string url = "https://" + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxsendmsg?sid={0}&r={1}&lang=zh_CN&pass_ticket={2}";
+            url = string.Format(url, baseReq.Sid, GetTimestamp(DateTime.Now), passTicket);
             SendMsgRequest req = new SendMsgRequest();
             req.BaseRequest = baseReq;
             req.Msg = msg;
@@ -249,12 +265,11 @@ namespace Wechat.API
             return rep;
         }
 
-
         public UploadmediaResponse Uploadmedia(string fromUserName, string toUserName, string id, string mime_type, int uploadType, int mediaType, byte[] buffer, string fileName, string pass_ticket, BaseRequest baseReq)
         {
             UploadmediaRequest req = new UploadmediaRequest();
             req.BaseRequest = baseReq;
-            req.ClientMediaId = getTimestamp(DateTime.Now);
+            req.ClientMediaId = GetTimestamp(DateTime.Now);
             req.DataLen = buffer.Length;
             req.StartPos = 0;
             req.TotalLen = buffer.Length;
@@ -264,7 +279,7 @@ namespace Wechat.API
             req.UploadType = uploadType;
             req.FileMd5 = UniversalTool.getMD5(buffer);
 
-            string url = "https://file.wx.qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json";
+            string url = "https://file." + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxuploadmedia?f=json";
             string requestJson = JsonConvert.SerializeObject(req);
             NameValueCollection data = new NameValueCollection();
             data.Add("id", id);
@@ -287,10 +302,9 @@ namespace Wechat.API
             return rep;
         }
 
-
         public SendMsgImgResponse SendMsgImg(ImgMsg msg, string pass_ticket, BaseRequest baseReq)
         {
-            string url = "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxsendmsgimg?fun=async&f=json&pass_ticket={0}";
+            string url = "https://" + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxsendmsgimg?fun=async&f=json&pass_ticket={0}";
             url = string.Format(url, pass_ticket);
             SendMsgImgRequest req = new SendMsgImgRequest();
             req.BaseRequest = baseReq;
@@ -304,7 +318,7 @@ namespace Wechat.API
 
         public OplogResponse Oplog(string userName, int cmdID, int op, string pass_ticket, BaseRequest baseReq)
         {
-            string url = "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxoplog?pass_ticket={0}";
+            string url = "https://" + Server + ".qq.com/cgi-bin/mmwebwx-bin/webwxoplog?pass_ticket={0}";
             url = string.Format(url, pass_ticket);
             OplogRequest req = new OplogRequest();
             req.BaseRequest = baseReq;
@@ -316,5 +330,25 @@ namespace Wechat.API
             var rep = JsonConvert.DeserializeObject<OplogResponse>(repJsonStr);
             return rep;
         }
+
+        public Bitmap GetImage(string headImgUrl)
+        {
+            Bitmap bmp = null;
+            try
+            {
+                string url = WechatApiService.GetAvatorUrl + headImgUrl;
+                var bytes = this.http.GET(url);
+                var dataStream = new MemoryStream(bytes);
+                var img = System.Drawing.Image.FromStream(dataStream);
+                dataStream.Close();
+                bmp = new System.Drawing.Bitmap(img);
+            }
+            catch (Exception)
+            {
+                bmp = new System.Drawing.Bitmap(10, 10);
+            }
+            return bmp;
+        }
+
     }
 }

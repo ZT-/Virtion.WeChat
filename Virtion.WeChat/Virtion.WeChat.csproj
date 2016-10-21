@@ -114,7 +114,6 @@
     <Compile Include="Controls\Item\ContactListItem.xaml.cs">
       <DependentUpon>ContactListItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Server\LoginService.cs" />
     <Compile Include="Server\RPC\BaseRequest.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -144,9 +143,8 @@
     <Compile Include="Server\WechatAPIService.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Server\WXApi.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Server\WechatClient.cs" />
+    <Compile Include="Server\WxApi.cs" />
     <Compile Include="Server\Wx\AddMsg.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -243,7 +241,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Windows\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -259,7 +257,7 @@
     <Compile Include="Windows\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

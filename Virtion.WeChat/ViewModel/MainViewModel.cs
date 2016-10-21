@@ -1,36 +1,84 @@
+using System.Collections.Generic;
+using System.Windows.Media;
 using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Ioc;
-using Virtion.WeChat.Windows;
+using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Threading;
+using Virtion.WeChat.Server.Wx;
+using Wechat.API;
 
 namespace Virtion.WeChat.ViewModel
 {
-    /// <summary>
-    /// This class contains properties that the main View can data bind to.
-    /// <para>
-    /// Use the <strong>mvvminpc</strong> snippet to add bindable properties to this ViewModel.
-    /// </para>
-    /// <para>
-    /// You can also use Blend to data bind with the tool's support.
-    /// </para>
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
-    /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        /// <summary>
-        /// Initializes a new instance of the MainViewModel class.
-        /// </summary>
+        private string userName;
+        public string UserName
+        {
+            get { return this.userName; }
+            set
+            {
+                this.userName = value;
+                base.RaisePropertyChanged("UserName");
+            }
+        }
+
+        private bool isLoading;
+        public bool IsLoading
+        {
+            get { return this.isLoading; }
+            set
+            {
+                this.isLoading = value;
+                base.RaisePropertyChanged("IsLoading");
+            }
+        }
+
         public MainViewModel()
         {
-            ////if (IsInDesignMode)
-            ////{
-            ////    // Code runs in Blend --> create design time data.
-            ////}
-            ////else
-            ////{
-            ////    // Code runs "for real"
-            ////}
+            App.WechatClient.OnAddUser += OnAddUser;
+            App.WechatClient.OnInitComplate += OnInitComplate;
+            App.WechatClient.OnRecvMsg += OnRecvMsg;
+            App.WechatClient.OnGetContact += OnGetContact;
+            App.WechatClient.OnGetRecent += OnGetRecent;
         }
+
+        private void OnGetRecent(List<User> list)
+        {
+            //foreach (var user in list)
+            //{
+            //    Messenger.Default.Send<User>(user, "AddRecent");
+            //}
+        }
+
+        private void OnGetContact(List<User> list)
+        {
+            foreach (var user in list)
+            {
+                Messenger.Default.Send<User>(user, "AddContactUser");
+            }
+        }
+
+        private void OnAddUser(User user)
+        {
+            Messenger.Default.Send<User>(user, "AddRecent");
+        }
+
+        private void OnRecvMsg(AddMsg msg)
+        {
+
+
+        }
+
+        private void OnInitComplate()
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                this.UserName = App.WechatClient.CurrentUser.DisplayName;
+                App.WechatClient.AvatarConverter.SetRequest(App.WechatClient.CurrentUser,App.MainWindow.I_Avator);
+
+                this.IsLoading = false;
+            });
+        }
+
+
     }
 }

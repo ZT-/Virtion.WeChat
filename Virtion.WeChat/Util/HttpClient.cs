@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using System.Net;
-using System.IO;
+﻿using System;
 using System.Collections;
-using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
+using System.Net;
+using System.Text;
 
-namespace Wechat.API.Http
+namespace Virtion.WeChat.Util
 {
     public class HttpClient
     {

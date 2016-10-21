@@ -11,7 +11,7 @@ namespace Virtion.WeChat.Windows
 
         private void LoginWindow_OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            this.Close();
+            this.Hide();
         }
     }
 }

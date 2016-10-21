@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Virtion.WeChat.Util;
 
-namespace Wechat.API
+namespace Virtion.WeChat.Server.Wx
 {
     public class User
     {
@@ -33,10 +30,59 @@ namespace Wechat.API
         public string Alias;
         public int SnsFlag;
         public int UniFriend;
-        public string DisplayName;
         public int ChatRoomId;
         public string KeyWord;
         public string EncryChatRoomId;
+
+        private string displayName;
+        public string DisplayName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.displayName) == true)
+                {
+                    if (string.IsNullOrEmpty(this.RemarkName) == true)
+                    {
+                        if (string.IsNullOrEmpty(this.NickName) == true)
+                        {
+                            this.displayName = this.UserName;
+                        }
+                        else
+                        {
+                            this.displayName = this.NickName;
+                        }
+                    }
+                    else
+                    {
+                        this.displayName = this.RemarkName;
+                    }
+
+                    var startPos = this.displayName.IndexOf("<span", StringComparison.Ordinal);
+                    while (startPos > -1)
+                    {
+                        var endPos = this.displayName.IndexOf("</span>", StringComparison.Ordinal);
+                        string emjio = this.displayName.Substring(startPos, endPos - startPos + 7);
+                        this.displayName = this.displayName.Replace(emjio, "[]");
+                        startPos = this.displayName.IndexOf("<span", StringComparison.Ordinal);
+                    }
+                }
+
+                return this.displayName;
+            }
+        }
+        public string PseudoUID
+        {
+            get
+            {
+                return MD5Helper.StringToMD5(
+                    this.NickName
+                + this.RemarkName
+                + this.Province
+                + this.City
+                + this.Signature);
+            }
+        }
+
 
     }
 }
