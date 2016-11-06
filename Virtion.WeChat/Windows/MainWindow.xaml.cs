@@ -23,13 +23,7 @@ namespace Virtion.WeChat.Windows
     public partial class MainWindow : MetroWindow
     {
         public string RedirectUrl;
-        public Config Config;
         public NotifyTray NotifyTray;
-
-        private string configPath
-        {
-            get { return App.CurrentPath + "//Data//Config.json"; }
-        }
 
         public MainWindow()
         {
@@ -109,43 +103,6 @@ namespace Virtion.WeChat.Windows
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            //ShowNotifyIcon();
-
-            this.LM_Marsk.IsLoading = true;
-
-            if (File.Exists(this.configPath) == true)
-            {
-                string s = File.ReadAllText(this.configPath);
-                try
-                {
-                    this.Config = JsonConvert.DeserializeObject<Config>(s);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("配置文件损坏" + ex.ToString());
-                }
-            }
-
-            if (this.Config == null)
-            {
-                this.Config = new Config()
-                {
-                    Left = 0,
-                    Top = 0,
-                    Height = 650,
-                    Width = 350,
-                    IsLoadAvatar = true
-                };
-            }
-
-            this.Left = this.Config.Left;
-            this.Top = this.Config.Top;
-            this.Width = this.Config.Width;
-            this.Height = this.Config.Height;
-
-        }
 
         private void G_TitleBar_MouseMove(object sender, MouseEventArgs e)
         {
@@ -194,15 +151,15 @@ namespace Virtion.WeChat.Windows
         private void MetroWindow_Closing(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
-            //this.Hide();
+            this.Hide();
 
-            //this.Config.Left = this.Left;
-            //this.Config.Top = this.Top;
-            //this.Config.Width = this.Width;
-            //this.Config.Height = this.Height;
+            this.Config.Left = this.Left;
+            this.Config.Top = this.Top;
+            this.Config.Width = this.Width;
+            this.Config.Height = this.Height;
 
-            //string s = JsonConvert.SerializeObject(this.Config);
-            //File.WriteAllText(this.configPath, s);
+            string s = JsonConvert.SerializeObject(this.Config);
+            File.WriteAllText(this.configPath, s);
         }
 
         private void B_Chat_MouseEnter(object sender, MouseEventArgs e)
