@@ -1,9 +1,10 @@
 ﻿<Controls:MetroWindow
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
-    x:Class="Virtion.WeChat.Windows.MainWindow"
+    x:Class="Virtion.WeChat.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:VControls="clr-namespace:Virtion.WeChat.Controls"
+
         Title="微信" 
         Height="650" Width="350" 
         FontSize="14" 
@@ -17,7 +18,6 @@
         Closing="MetroWindow_Closing"
         Loaded="Window_Loaded" 
         SnapsToDevicePixels="True"
-        DataContext="{Binding Main, Source={StaticResource Locator}}"
         >
     <Controls:MetroWindow.Resources>
         <Style x:Key="CommondButtonStyle" TargetType="Button">
@@ -79,16 +79,15 @@
                     MouseLeave="B_Avator_MouseLeave"
                     >
                 <Image x:Name="I_Avator"  
-                   Stretch="Fill" 
+                   Stretch="Fill"   
                    />
             </Border>
 
             <Label x:Name="L_Name" 
                   Margin="78,10,0,0" 
-                   Content="{Binding UserName}" 
+                   Content="用户名" 
                    Foreground="Black" 
-                   FontSize="15"
-                   />
+                   FontSize="15" />
         </Grid>
 
         <Grid Grid.Row="1">
@@ -123,7 +122,7 @@
                     MouseLeave="B_Contact_MouseLeave" 
                     >
                 <Image Stretch="None" 
-                       Source="/Resources/img/button_contact.png"/>
+                       Source="Resources/img/button_contact.png"/>
             </Border>
 
         </Grid>
@@ -156,9 +155,7 @@
                  />
 
             <VControls:LoadingMask x:Name="LM_Marsk"
-                                   Grid.Row="0"
-                                   IsLoading="{Binding Path=IsLoading,Mode=TwoWay}"
-                                   />
+                                   Grid.Row="1" />
             
         </Grid>
 

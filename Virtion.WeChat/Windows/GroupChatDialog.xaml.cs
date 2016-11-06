@@ -228,10 +228,60 @@ namespace Virtion.WeChat.Windows
             }
         }
 
+        public void ReceiveImage(Msg msg)
+        {
+            string content = msg.Content;
+
+            string formUser = "fromusername = \"";
+            int pos = content.IndexOf(formUser, StringComparison.Ordinal);
+            string userName = "";
+
+            if(pos==-1)
+            {
+                formUser = "fromusername=\"";
+                pos = content.IndexOf(formUser, StringComparison.Ordinal);
+            }
+
+            if (pos > -1)
+            {
+
+                int dotPos = content.IndexOf("\"", pos + formUser.Length, StringComparison.Ordinal);
+                userName = content.Substring(pos + formUser.Length, dotPos - formUser.Length - pos);
+
+                bool flag = true;
+                if (string.IsNullOrEmpty(this.chatConfig.ImageUserName) == true || userName != this.chatConfig.ImageUserName)
+                {
+                    flag = false;
+                }
+
+                if (content.IndexOf(this.chatConfig.UserImage) == -1)
+                {
+                    flag = false;
+                }
+
+                if (this.chatConfig.IsFilterUserImage == true)
+                {
+                    if (flag == true)
+                    {
+                        this.SendRandomMessage();
+                    }
+                }
+
+            }
+
+            this.TB_Receive.Text += userName + "(图片消息)：\n";
+            this.TB_Receive.Text += content + "\n";
+
+            //this.DealAllFilter(msg);
+        }
+
         public override void ReceiveMessage(Msg msg)
         {
-            if (msg.MsgType != 1)
+            if (msg.MsgType == 47)
+            {
+                this.ReceiveImage(msg);
                 return;
+            }
 
             int pos = msg.Content.IndexOf(":<br/>");
             if (pos > -1)
@@ -262,6 +312,8 @@ namespace Virtion.WeChat.Windows
 
         }
 
+
+
         public override bool SendMessage(string word)
         {
             long time = Time.Now();
@@ -291,6 +343,7 @@ namespace Virtion.WeChat.Windows
         }
 
 
+
         #region Filter
         private void DealAllFilter(Msg msg)
         {
@@ -311,22 +364,28 @@ namespace Virtion.WeChat.Windows
         {
             if (msg.Content.IndexOf(this.chatConfig.UserMsg) > -1)
             {
-                var random = new Random();
-                var index = random.Next(this.chatConfig.DefineList.Count);
-
-                var thread = new Thread(() =>
-                {
-                    if (this.chatConfig.Delay > 0)
-                    {
-                        Thread.Sleep(this.chatConfig.Delay);
-                    }
-                    Dispatcher.BeginInvoke(new Action(() =>
-                    {
-                        this.SendMessage(this.chatConfig.DefineList[index]);
-                    }));
-                });
-                thread.Start();
+                this.SendRandomMessage();
             }
+        }
+
+        private void SendRandomMessage()
+        {
+            var random = new Random();
+            var index = random.Next(this.chatConfig.DefineList.Count);
+
+            var thread = new Thread(() =>
+            {
+                if (this.chatConfig.Delay > 0)
+                {
+                    Thread.Sleep(this.chatConfig.Delay);
+                }
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    this.SendMessage(this.chatConfig.DefineList[index]);
+                }));
+            });
+            thread.Start();
+
         }
 
         public void FilterMaxCountMessage(Msg msg)

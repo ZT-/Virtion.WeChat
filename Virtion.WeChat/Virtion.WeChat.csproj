@@ -67,21 +67,9 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GalaSoft.MvvmLight">
-      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Extras">
-      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
-    </Reference>
-    <Reference Include="GalaSoft.MvvmLight.Platform">
-      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
-    </Reference>
     <Reference Include="MahApps.Metro, Version=1.3.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MahApps.Metro.1.3.0\lib\net45\MahApps.Metro.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -92,7 +80,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.3.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
@@ -114,61 +102,7 @@
     <Compile Include="Controls\Item\ContactListItem.xaml.cs">
       <DependentUpon>ContactListItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Server\RPC\BaseRequest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\RPC\BaseResponse.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\RPC\BatchGetContactRequest.cs" />
-    <Compile Include="Server\RPC\BatchGetContactResponse.cs" />
-    <Compile Include="Server\RPC\GetContactResponse.cs" />
-    <Compile Include="Server\RPC\InitRequest.cs" />
-    <Compile Include="Server\RPC\initResponse.cs" />
-    <Compile Include="Server\RPC\LoginRedirectResult.cs" />
-    <Compile Include="Server\RPC\LoginResult.cs" />
-    <Compile Include="Server\RPC\OplogRequest.cs" />
-    <Compile Include="Server\RPC\OplogResponse.cs" />
-    <Compile Include="Server\RPC\SendMsgImgRequest.cs" />
-    <Compile Include="Server\RPC\SendMsgImgResponse.cs" />
-    <Compile Include="Server\RPC\SendMsgRequest.cs" />
-    <Compile Include="Server\RPC\SendMsgResponse.cs" />
-    <Compile Include="Server\RPC\StatusnotifyRequest.cs" />
-    <Compile Include="Server\RPC\StatusnotifyResponse.cs" />
-    <Compile Include="Server\RPC\SyncCheckResponse.cs" />
-    <Compile Include="Server\RPC\SyncRequest.cs" />
-    <Compile Include="Server\RPC\SyncResponse.cs" />
-    <Compile Include="Server\RPC\UploadmediaRequest.cs" />
-    <Compile Include="Server\RPC\UploadmediaResponse.cs" />
-    <Compile Include="Server\WechatAPIService.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\WechatClient.cs" />
-    <Compile Include="Server\WxApi.cs" />
-    <Compile Include="Server\Wx\AddMsg.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Wx\AppInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Wx\BatchUser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Wx\ImgMsg.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Wx\Msg.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Wx\RecommendInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Wx\SyncKey.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Server\Wx\User.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Server\LoginService.cs" />
     <Compile Include="Struct\BaseRequest.cs" />
     <Compile Include="Struct\BaseResponse.cs" />
     <Compile Include="Struct\ChatSetting.cs" />
@@ -188,7 +122,6 @@
       <DependentUpon>LoadingMask.xaml</DependentUpon>
     </Compile>
     <Compile Include="Theme.cs" />
-    <Compile Include="Util\HttpClient.cs" />
     <Compile Include="Util\MD5Helper.cs" />
     <Compile Include="Util\PinYinConverter.cs" />
     <Compile Include="Util\Time.cs" />
@@ -199,14 +132,10 @@
     <Compile Include="Util\StringHelper.cs" />
     <Compile Include="Util\Structs.cs" />
     <Compile Include="Util\UIHelper.cs" />
-    <Compile Include="Util\UniversalTool.cs" />
     <Compile Include="Util\VirtionVisualTreeHelper.cs" />
     <Compile Include="Util\Win32API.cs" />
     <Compile Include="Util\WWWForm.cs" />
     <Compile Include="Util\WWWTranscoder.cs" />
-    <Compile Include="ViewModel\LoginViewModel.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Windows\ChatDialog.cs" />
     <Compile Include="Windows\ChatSettingWindow.xaml.cs">
       <DependentUpon>ChatSettingWindow.xaml</DependentUpon>
@@ -214,6 +143,7 @@
     <Compile Include="Windows\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Server\WXApi.cs" />
     <Compile Include="Windows\UserChatDialog.xaml.cs">
       <DependentUpon>UserChatDialog.xaml</DependentUpon>
     </Compile>
@@ -241,7 +171,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows\MainWindow.xaml">
+    <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -257,7 +187,7 @@
     <Compile Include="Windows\LoginWindow.xaml.cs">
       <DependentUpon>LoginWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows\MainWindow.xaml.cs">
+    <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

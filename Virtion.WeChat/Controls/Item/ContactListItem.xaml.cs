@@ -2,8 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Virtion.WeChat.Server.Wx;
-
+using Virtion.WeChat.Struct;
 
 namespace Virtion.WeChat.Controls.Item
 {
@@ -68,7 +67,7 @@ namespace Virtion.WeChat.Controls.Item
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            App.WechatClient.AvatarConverter.SetRequest(this.User,this.I_Avatar);
+            App.MainWindow.AvatarConverter.SetRequest(User,this.I_Avatar);
         }
     }
 }

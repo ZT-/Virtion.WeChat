@@ -32,12 +32,14 @@
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="40"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
                     <CheckBox x:Name="CB_IsFilterUserMsg"
                       Grid.Row="0"
-                      Content="检测自定义消息"
+                      Content="检测自定义文字消息"
                         />
 
                     <TextBox x:Name="TB_UserMsg"
@@ -47,7 +49,33 @@
                     VerticalContentAlignment="Center"
                     />
 
-                    <StackPanel  Grid.Row="2"
+                    <CheckBox x:Name="CB_IsFilterImageMsg"
+                      Grid.Row="2"
+                      Content="检测自定义图片消息"
+                      />
+
+                    <Label  Margin="150,0,5,0"
+                    VerticalAlignment="Center"
+                    Grid.Row="2"
+                    Content="指定发送图片消息用户"
+                    />
+                    
+                    <TextBox x:Name="TB_ImageUserName"
+                    Margin="280,5,5,5"
+                    Grid.Row="2"
+                    FontSize="16"
+                    VerticalContentAlignment="Center"
+                    />
+
+                    <TextBox x:Name="TB_UserImageMsg"
+                    Margin="5"
+                    Grid.Row="3"
+                    FontSize="16"
+                    VerticalContentAlignment="Center"
+                    />
+
+
+                    <StackPanel  Grid.Row="4"
                      Orientation="Horizontal"
                      >
                         <Label Content="自定义自动发送内容（每条语句用/隔开）"
@@ -70,7 +98,7 @@
                     </StackPanel>
 
                     <TextBox x:Name="TB_DefineList"
-                    Grid.Row="3"
+                    Grid.Row="5"
                      Margin="5"     
                     />
 
@@ -113,9 +141,7 @@
                     <TextBlock Text="用户白名单:"   
                                VerticalAlignment="Center"
                                Margin="5,0,0,0"
-                               Grid.Row="3"
-                               Visibility="Hidden"
-                               />
+                               Grid.Row="3"/>
 
                     <ListBox x:Name="LB_White"
                        Grid.Row="4"

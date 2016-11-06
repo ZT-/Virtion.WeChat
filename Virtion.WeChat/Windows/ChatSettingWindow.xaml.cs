@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Newtonsoft.Json;
 using Virtion.WeChat.Struct;
 
@@ -66,8 +56,12 @@ namespace Virtion.WeChat.Windows
             IsFilterSelf = config.IsFilterSelfDef;
             IsHightLight = config.IsHightLight;
 
+
             this.CB_IsFilterUserMsg.IsChecked = this.config.IsFilterUserMsg;
             this.TB_UserMsg.Text = this.config.UserMsg;
+            this.TB_ImageUserName.Text = this.config.ImageUserName;
+            this.TB_UserImageMsg.Text = this.config.UserImage;
+            this.CB_IsFilterImageMsg.IsChecked = this.config.IsFilterUserImage;
 
             this.TB_Delay.Text = this.config.Delay.ToString();
 
@@ -87,7 +81,11 @@ namespace Virtion.WeChat.Windows
             this.config.IsFilterSelfDef = this.CB_IsFilterSelf.IsChecked.Value;
             this.config.IsHightLight = this.CB_IsFilterAdd.IsChecked.Value;
             this.config.IsFilterAdd = this.CB_IsFilterAdd.IsChecked.Value;
+            this.config.IsFilterUserImage = this.CB_IsFilterImageMsg.IsChecked.Value;
+            this.config.IsFilterUserMsg = this.CB_IsFilterUserMsg.IsChecked.Value;
 
+            this.config.ImageUserName = this.TB_ImageUserName.Text;
+            this.config.UserImage = this.TB_UserImageMsg.Text;
 
             int i = 0;
             if (Int32.TryParse(this.TB_MaxMsgLength.Text, out i) == true)
@@ -99,16 +97,22 @@ namespace Virtion.WeChat.Windows
                 MessageBox.Show("输入字符上限不是数字");
             }
 
-            var isChecked = this.CB_IsFilterUserMsg.IsChecked;
+            string text = this.TB_DefineList.Text;
+            var list = text.Split('/');
+            this.config.DefineList.Clear();
+            foreach (var item in list)
+            {
+                this.config.DefineList.Add(item);
+            }
+
+            this.config.UserMsg = this.TB_UserMsg.Text;
+
+            var isChecked = this.config.IsFilterUserMsg;
             if (isChecked == true)
             {
-                this.config.IsFilterUserMsg = true;
                 string s = this.TB_UserMsg.Text;
                 if (string.IsNullOrEmpty(s) == false)
                 {
-                    this.config.UserMsg = s;
-                    string text = this.TB_DefineList.Text;
-
                     if (string.IsNullOrEmpty(this.TB_Delay.Text) == false)
                     {
                         if (Int32.TryParse(this.TB_Delay.Text, out i) == true)
@@ -119,13 +123,6 @@ namespace Virtion.WeChat.Windows
                         {
                             MessageBox.Show("输入延时不是数字");
                         }
-                    }
-
-                    var list = text.Split('/');
-                    this.config.DefineList.Clear();
-                    foreach (var item in list)
-                    {
-                        this.config.DefineList.Add(item);
                     }
                 }
                 else

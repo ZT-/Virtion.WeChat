@@ -10,7 +10,10 @@ namespace Virtion.WeChat.Struct
         public bool IsMonitor;
         public bool IsMonitorOnMini;
         public string UserMsg;
+        public string UserImage;
+        public string ImageUserName;
         public bool IsFilterUserMsg;
+        public bool IsFilterUserImage;
         public bool IsFilterMsgCount;
         public int MaxMsgLength;
         public bool IsFilterAdd;

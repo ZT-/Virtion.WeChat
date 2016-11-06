@@ -2,38 +2,30 @@
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using MahApps.Metro.Controls;
 
 namespace Virtion.WeChat.Controls
 {
     public partial class LoadingMask : UserControl
     {
-        public static readonly DependencyProperty IsLoadingProperty = DependencyProperty.Register(
-                    "IsLoading", 
-                    typeof(bool), 
-                    typeof(LoadingMask),
-                    new FrameworkPropertyMetadata(false,
-                        new PropertyChangedCallback(IsLoading_OnValueChanged)
-                       ));
-
-        private static void IsLoading_OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as LoadingMask).ShowLoading( (bool)e.NewValue);
-        }
-
+        public static bool IsError;
         public bool IsLoading
         {
             get
             {
-                return (bool)GetValue(IsLoadingProperty);
+                if (this.TB_Loading.Visibility == Visibility.Visible)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             set
             {
-                SetValue(IsLoadingProperty, value);
+                this.ShowLoading(value);
             }
         }
-
-        public static bool IsError;
         public string Tip
         {
             get

@@ -8,25 +8,22 @@ using System.Windows.Media.Imaging;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Controls;
+using Virtion.WeChat.Struct;
 using System.Text;
 using System.Security.Cryptography;
-using GalaSoft.MvvmLight.Threading;
 using Virtion.WeChat.Server;
-using Virtion.WeChat.Server.Wx;
 
 namespace Virtion.WeChat
 {
-    public class AvatarConverter
+    public class AvatarConverter : UserControl
     {
-        private readonly Dictionary<string, ImageSource> avatorTable = new Dictionary<string, ImageSource>();
-        private readonly Queue<AvatarRequest> avatarRequestQueue = new Queue<AvatarRequest>();
-        private bool isEnd;
+        public Dictionary<string, ImageSource> AvatorTable = new Dictionary<string, ImageSource>();
 
         private string avatarTmpFolder
         {
             get
             {
-                return App.CurrentPath + "Data\\" + App.WechatClient.CurrentUser.Uin + "\\Avatar\\";
+                return App.CurrentPath + "Data\\" + CurrentUser.WxUin + "\\Avatar\\";
             }
         }
 
@@ -44,17 +41,45 @@ namespace Virtion.WeChat
             }
         }
 
-        private ImageSource GetImage(User user)
+        private static Queue<AvatarRequest> avatarRequestQueue = new Queue<AvatarRequest>();
+
+
+
+        private ImageSource GetHead(User user)
         {
             string jpgPath = avatarTmpFolder + user.PseudoUID + ".jpg";
+
             System.Drawing.Bitmap bmp = null;
+
             if (File.Exists(jpgPath) == true)
             {
                 bmp = new System.Drawing.Bitmap(jpgPath);
             }
             else
             {
-                bmp = App.WechatClient.GetImage(user.HeadImgUrl);
+                string url = WxApi.GetAvatorUrl + user.HeadImgUrl;
+                WebRequest request = WebRequest.Create(url);
+                request.Headers.Add(HttpRequestHeader.Cookie, CurrentUser.Cookie);
+                WebResponse response = request.GetResponse();
+                //Console.WriteLine("获取头像,长度:" + response.ContentLength);
+                if (response.ContentLength == 0)
+                {
+                    response.Close();
+                    return null;
+                }
+                System.Drawing.Image img = null;
+                try
+                {
+                    Stream dataStream = response.GetResponseStream();
+                    img = System.Drawing.Image.FromStream(dataStream);
+                    dataStream.Close();
+                    response.Close();
+                    bmp = new System.Drawing.Bitmap(img);
+                }
+                catch (Exception)
+                {
+                    bmp = new System.Drawing.Bitmap(10, 10);
+                }
                 bmp.Save(jpgPath);
             }
 
@@ -64,7 +89,7 @@ namespace Virtion.WeChat
                 IntPtr.Zero, Int32Rect.Empty,
                 BitmapSizeOptions.FromEmptyOptions());
 
-            this.avatorTable[user.UserName] = WpfBitmap;
+            this.AvatorTable[user.UserName] = WpfBitmap;
             //Console.WriteLine(user.UserName);
 
             return WpfBitmap;
@@ -72,9 +97,9 @@ namespace Virtion.WeChat
 
         public void SetRequest(User user, System.Windows.Controls.Image source)
         {
-            if (this.avatorTable.ContainsKey(user.UserName))
+            if (this.AvatorTable.ContainsKey(user.UserName))
             {
-                source.Source = this.avatorTable[user.UserName];
+                source.Source = this.AvatorTable[user.UserName];
                 return;
             }
 
@@ -85,38 +110,26 @@ namespace Virtion.WeChat
             });
         }
 
-        public void Quit()
-        {
-            this.isEnd = true;
-        }
-
         public void Start()
         {
             Thread thread = new Thread(() =>
             {
                 while (true)
                 {
-                    if (this.isEnd == true)
-                    {
-                        return;
-                    }
-
                     Thread.Sleep(50);
                     if (avatarRequestQueue.Count > 0)
                     {
                         var request = avatarRequestQueue.Dequeue();
-
-                        DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                        this.Dispatcher.BeginInvoke(new Action(() =>
                         {
-                            request.ImageSource.Source = this.GetImage(request.User);
-                        });
+                            request.ImageSource.Source = this.GetHead(request.User);
+                        }));
                     }
                 }
             });
             thread.IsBackground = true;
             thread.Start();
         }
-
 
     }
 }

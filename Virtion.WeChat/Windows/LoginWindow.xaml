@@ -1,22 +1,12 @@
 ﻿<Window x:Class="Virtion.WeChat.Windows.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:command="http://www.galasoft.ch/mvvmlight"
         Title="微信" 
         Height="550" Width="400" 
         WindowStartupLocation="CenterScreen" 
+        Loaded="Window_Loaded"
         SnapsToDevicePixels="True"
-        DataContext="{Binding Login, Source={StaticResource Locator}}"
-        IsEnabled="{Binding IsEnabled}"
-        IsEnabledChanged="LoginWindow_OnIsEnabledChanged"
         >
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <command:EventToCommand Command="{Binding StartCommand}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
-    
     <Grid Background="#42464c">
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
@@ -29,17 +19,14 @@
                HorizontalAlignment="Center" 
                Stretch="Fill" 
                VerticalAlignment="Top"
-               Width="301"
-               Source="{Binding Source}"
-               />
+               Width="301" />
         <Label Grid.Row="2" 
                HorizontalAlignment="Center" 
                Name="login_info" 
                VerticalAlignment="Center" 
                FontSize="15" 
                Foreground="#FFDDDDDD" 
-               Content="{Binding LoginInfo}" 
+               Content="正在载入二维码..." 
                FontWeight="Normal" />
     </Grid>
 </Window>
-
