@@ -61,6 +61,8 @@ namespace Virtion.WeChat.Windows
             this.TB_UserMsg.Text = this.config.UserMsg;
             this.TB_ImageUserName.Text = this.config.ImageUserName;
             this.TB_UserImageMsg.Text = this.config.UserImage;
+            this.TB_MsgUserName.Text = this.config.MsgUserName;
+
             this.CB_IsFilterImageMsg.IsChecked = this.config.IsFilterUserImage;
 
             this.TB_Delay.Text = this.config.Delay.ToString();
@@ -83,6 +85,7 @@ namespace Virtion.WeChat.Windows
             this.config.IsFilterAdd = this.CB_IsFilterAdd.IsChecked.Value;
             this.config.IsFilterUserImage = this.CB_IsFilterImageMsg.IsChecked.Value;
             this.config.IsFilterUserMsg = this.CB_IsFilterUserMsg.IsChecked.Value;
+            this.config.MsgUserName = this.TB_MsgUserName.Text;
 
             this.config.ImageUserName = this.TB_ImageUserName.Text;
             this.config.UserImage = this.TB_UserImageMsg.Text;

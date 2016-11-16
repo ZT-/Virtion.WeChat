@@ -236,7 +236,7 @@ namespace Virtion.WeChat.Windows
             int pos = content.IndexOf(formUser, StringComparison.Ordinal);
             string userName = "";
 
-            if(pos==-1)
+            if (pos == -1)
             {
                 formUser = "fromusername=\"";
                 pos = content.IndexOf(formUser, StringComparison.Ordinal);
@@ -297,11 +297,11 @@ namespace Virtion.WeChat.Windows
                 var userID = msg.FromUserName;
                 if (this.nameTable != null && this.nameTable.ContainsKey(userID) == true)
                 {
-                    TB_Receive.Text += this.nameTable[userID] + ":\n";
+                    TB_Receive.Text += this.nameTable[userID] + "(" + userID + "):\n";
                 }
                 else
                 {
-                    TB_Receive.Text += msg.FromUserName + ":\n";
+                    TB_Receive.Text += "未知用户名(" + userID + "):\n";
                 }
                 TB_Receive.Text += msg.Content + "\n";
             }
@@ -364,7 +364,33 @@ namespace Virtion.WeChat.Windows
         {
             if (msg.Content.IndexOf(this.chatConfig.UserMsg) > -1)
             {
-                this.SendRandomMessage();
+                if (string.IsNullOrEmpty(this.chatConfig.MsgUserName) == false)
+                {
+                    bool flag = false;
+                    string userId = msg.FromUserName;
+                    if (this.nameTable.ContainsKey(userId) == true)
+                    {
+                        if (this.chatConfig.MsgUserName == this.nameTable[userId])
+                        {
+                            flag = true;
+                        }
+                    }
+
+                    if (this.chatConfig.MsgUserName == msg.FromUserName)
+                    {
+                        flag = true;
+                    }
+
+                    if (flag == true)
+                    {
+                        this.SendRandomMessage();
+                    }
+                }
+                else
+                {
+                    this.SendRandomMessage();
+                }
+
             }
         }
 

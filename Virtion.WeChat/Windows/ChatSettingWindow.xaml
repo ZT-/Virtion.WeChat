@@ -42,6 +42,20 @@
                       Content="检测自定义文字消息"
                         />
 
+                    <Label  Margin="150,0,5,0"
+                    VerticalAlignment="Center"
+                    Grid.Row="0"
+                    Content="指定发送消息用户"
+                    />
+
+                    <TextBox x:Name="TB_MsgUserName"
+                    Margin="280,5,5,5"
+                    Grid.Row="0"
+                    FontSize="16"
+                    VerticalContentAlignment="Center"
+                    />
+
+
                     <TextBox x:Name="TB_UserMsg"
                     Margin="5"
                     Grid.Row="1"
